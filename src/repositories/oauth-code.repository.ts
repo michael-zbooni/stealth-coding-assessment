@@ -2,9 +2,9 @@ import { Repository } from 'typeorm'
 import {
   DateInterval,
   OAuthAuthCodeRepository as OAuthAuthCodeRepositoryInterface,
-  generateRandomToken,
 } from '@jmondi/oauth2-server'
 
+import crypto from 'crypto'
 import { OAuthCode } from '../entities/oauth-code.entity'
 import { OAuthClient } from '../entities/oauth-client.entity'
 import { OAuthScope } from '../entities/oauth-scope.entity'
@@ -30,7 +30,7 @@ export class OAuthCodeRepository implements OAuthAuthCodeRepositoryInterface {
     scopes: OAuthScope[],
   ) {
     const authCode = new OAuthCode()
-    authCode.code = generateRandomToken()
+    authCode.code = crypto.randomBytes(32).toString('base64url')
     authCode.expiresAt = new DateInterval('15m').getEndDate()
     authCode.client = client
     authCode.clientId = client.id

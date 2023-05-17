@@ -4,6 +4,7 @@ import {
   generateRandomToken,
   OAuthTokenRepository as OAuthTokenRepositoryInterface,
 } from '@jmondi/oauth2-server'
+import crypto from 'crypto'
 
 import { OAuthClient } from '../entities/oauth-client.entity'
 import { OAuthScope } from '../entities/oauth-scope.entity'
@@ -28,7 +29,7 @@ export class OAuthTokenRepository implements OAuthTokenRepositoryInterface {
     user?: OAuthUser,
   ): Promise<OAuthToken> {
     const token = new OAuthToken()
-    token.accessToken = generateRandomToken()
+    token.accessToken = crypto.randomBytes(32).toString('base64')
     token.accessTokenExpiresAt = new DateInterval('2h').getEndDate()
     token.client = client
     token.clientId = client.id
@@ -55,7 +56,7 @@ export class OAuthTokenRepository implements OAuthTokenRepositoryInterface {
   }
 
   async issueRefreshToken(accessToken: OAuthToken): Promise<OAuthToken> {
-    accessToken.refreshToken = generateRandomToken()
+    accessToken.refreshToken = crypto.randomBytes(32).toString('base64')
     accessToken.refreshTokenExpiresAt = new DateInterval('2h').getEndDate()
     return await this.baseRepository.save(accessToken)
   }
