@@ -3,6 +3,9 @@ import type { PostgresConnectionOptions } from 'typeorm/driver/postgres/Postgres
 
 export const SERVER_PORT = Number(process.env.PORT) || 3000
 
+// no fallback secret to avoid accidents with missing env var
+export const JWT_SECRET = process.env.JWT_SECRET
+
 export const postgresConfig: Readonly<PostgresConnectionOptions> = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST || '127.0.0.1',
