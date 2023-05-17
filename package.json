@@ -15,6 +15,7 @@
     "@commitlint/config-conventional": "^17.6.3",
     "@jmondi/oauth2-server": "^2.6.1",
     "body-parser": "^1.20.2",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.16"
