@@ -9,5 +9,5 @@ export const postgresConfig: Readonly<PostgresConnectionOptions> = {
   port: Number(process.env.POSTGRES_PORT) || 5432,
   username: process.env.POSTGRES_USERNAME || 'postgres',
   password: process.env.POSTGRES_PASSWORD || 'postgres',
-  namingStrategy: new SnakeNamingStrategy(),
+  database: process.env.POSTGRES_DATABASE || 'stealth_assessment',
 }

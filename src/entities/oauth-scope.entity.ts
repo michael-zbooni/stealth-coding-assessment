@@ -8,7 +8,7 @@ import {
 } from 'typeorm'
 import { OAuthScope as OAuthScopeInterface } from '@jmondi/oauth2-server'
 
-@Entity()
+@Entity('oauth_scope') // the snake_case naming strategy will make this o_auth_scope
 export class OAuthScope implements OAuthScopeInterface {
   @PrimaryGeneratedColumn()
   id!: number

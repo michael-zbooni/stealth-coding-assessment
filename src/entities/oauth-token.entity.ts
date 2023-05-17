@@ -16,7 +16,7 @@ import { OAuthClient } from './oauth-client.entity'
 import { OAuthScope } from './oauth-scope.entity'
 import { OAuthUser } from './oauth-user.entity'
 
-@Entity('oauth_tokens')
+@Entity('oauth_token') // the snake_case naming strategy will make this o_auth_token
 export class OAuthToken implements OAuthTokenInterface {
   @PrimaryColumn('varchar', { length: 128 })
   accessToken!: string

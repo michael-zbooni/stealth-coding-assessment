@@ -19,7 +19,7 @@ import { OAuthClient } from './oauth-client.entity'
 import { OAuthScope } from './oauth-scope.entity'
 import { OAuthUser } from './oauth-user.entity'
 
-@Entity('oauth_auth_codes')
+@Entity('oauth_code') // the snake_case naming strategy will make this o_auth_code
 export class OAuthCode implements OAuthAuthCodeInterface {
   @PrimaryColumn('varchar', { length: 128 })
   code!: string

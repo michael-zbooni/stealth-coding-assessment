@@ -9,9 +9,11 @@ import {
   PrimaryColumn,
   JoinTable,
   UpdateDateColumn,
+  Entity,
 } from 'typeorm'
 import { OAuthScope } from './oauth-scope.entity'
 
+@Entity('oauth_client') // the snake_case naming strategy will make this o_auth_client
 export class OAuthClient implements OAuthClientInterface {
   @PrimaryColumn('uuid')
   readonly id!: string
@@ -22,10 +24,10 @@ export class OAuthClient implements OAuthClientInterface {
   @Column()
   name!: string
 
-  @Column('simple-array')
+  @Column('text', { array: true })
   redirectUris!: string[]
 
-  @Column('simple-array')
+  @Column('text', { array: true })
   allowedGrants!: GrantIdentifier[]
 
   @ManyToMany(() => OAuthScope, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
