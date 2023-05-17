@@ -33,8 +33,8 @@ export class OAuthCode implements OAuthAuthCodeInterface {
   user?: OAuthUser
 
   @Index()
-  @Column('uuid', { nullable: true })
-  userId?: string
+  @Column({ nullable: true })
+  userId?: number
 
   @ManyToOne(() => OAuthClient)
   @JoinColumn({ name: 'clientId' })

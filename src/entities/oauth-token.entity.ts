@@ -10,14 +10,14 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { OAuthToken } from '@jmondi/oauth2-server'
+import { OAuthToken as OAuthTokenInterface } from '@jmondi/oauth2-server'
 
 import { OAuthClient } from './oauth-client.entity'
 import { OAuthScope } from './oauth-scope.entity'
 import { OAuthUser } from './oauth-user.entity'
 
 @Entity('oauth_tokens')
-export class Token implements OAuthToken {
+export class OAuthToken implements OAuthTokenInterface {
   @PrimaryColumn('varchar', { length: 128 })
   accessToken!: string
 
@@ -48,9 +48,9 @@ export class Token implements OAuthToken {
   user?: OAuthUser
 
   @Index()
-  @Column('uuid', { nullable: true })
+  @Column({ nullable: true })
   // @IsUUID()
-  userId?: string
+  userId?: number
 
   @ManyToMany(() => OAuthScope, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinTable({
