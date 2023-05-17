@@ -21,6 +21,9 @@ export class OAuthUser implements OAuthUserInterface {
   @Column({ unique: true })
   email!: string
 
+  @Column()
+  hashedPassword!: string
+
   @CreateDateColumn()
   readonly createdAt!: Date
 
