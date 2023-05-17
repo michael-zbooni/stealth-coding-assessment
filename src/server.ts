@@ -1,11 +1,13 @@
 import express from 'express'
 
+import { SERVER_PORT } from './constants'
+
 const app = express()
 
 app
   .get('/', (req, res) => {
     res.send('Hello World!')
   })
-  .listen(3000, () => {
-    console.log('Server running on port 3000')
+  .listen(SERVER_PORT, () => {
+    console.log(`Server running on port ${SERVER_PORT}`)
   })
