@@ -15,7 +15,7 @@ export default class OAuthClientSeeder implements Seeder {
         name: 'Some 3rd Party Backend',
         secret: 'some-client-secret',
         redirectUris: ['http://localhost:3000/oauth/callback'],
-        allowedGrants: ['authorization_code', 'refresh_token'],
+        allowedGrants: ['password'],
       },
     ])
   }

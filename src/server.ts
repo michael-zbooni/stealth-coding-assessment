@@ -3,12 +3,18 @@ import { DataSource } from 'typeorm'
 
 import { SERVER_PORT } from './constants'
 import { mainDataSource } from './data-source'
-import { AuthService } from './services/auth.service'
+import { AuthController } from './controllers/auth.service'
 import bodyParser from 'body-parser'
 
 const app = express()
 
-const authService = new AuthService(mainDataSource)
+const authController = new AuthController(mainDataSource)
+
+function bindControllerMethod<T>(controller: T, methodName: keyof T) {
+  if (typeof controller[methodName] === 'function') {
+    return (controller[methodName] as Function).bind(controller)
+  }
+}
 
 function startServer() {
   app
@@ -17,11 +23,7 @@ function startServer() {
     .get('/', (req, res) => {
       res.send('Hello World!')
     })
-    .get('/authorize', authService.temporary.bind(authService))
-    .get('/oauth/callback', (request, response) => {
-      response.json({ ok: true })
-    })
-    .post('/token', authService.tokenTemporary.bind(authService))
+    .post('/token', bindControllerMethod(authController, 'issueToken'))
     .listen(SERVER_PORT, () => {
       console.log(`Server running on port ${SERVER_PORT}`)
     })

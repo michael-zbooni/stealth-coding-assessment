@@ -23,7 +23,7 @@ import {
   handleExpressResponse,
 } from '@jmondi/oauth2-server/dist/adapters/express'
 
-export class AuthService {
+export class AuthController {
   private readonly authorizationServer: AuthorizationServer
 
   constructor(datasource: DataSource) {
@@ -36,59 +36,31 @@ export class AuthService {
       new JwtService(JWT_SECRET),
     )
     this.authorizationServer.enableGrantTypes(
-      ['authorization_code', new DateInterval('15m')],
+      // ['authorization_code', new DateInterval('15m')],
+      ['password', new DateInterval('15m')],
       'refresh_token',
     )
   }
 
-  async temporary(request: Express.Request, response: Express.Response) {
-    try {
-      const authRequest =
-        await this.authorizationServer.validateAuthorizationRequest(
-          requestFromExpress(request),
-        )
+  // there WAS a PoC code here for the Authorization Code grant flow, but was
+  // incomplete, and actually not needed for the coding exercise, and so was removed.
+  // See this commit to revive: https://github.com/myknbani/stealth-coding-assessment/commit/3a5beb0
 
-      // The auth request object can be serialized and saved into a user's session.
-      // You will probably want to redirect the user at this point to a login endpoint.
-
-      // Once the user has logged in set the user on the AuthorizationRequest
-      console.log(
-        'Once the user has logged in set the user on the AuthorizationRequest',
-      )
-      authRequest.user = { id: 1, email: 'richard.michael.coo@gmail.com' }
-
-      // At this point you should redirect the user to an authorization page.
-      // This form will ask the user to approve the client and the scopes requested.
-
-      // Once the user has approved or denied the client update the status
-      // (true = approved, false = denied)
-      authRequest.isAuthorizationApproved = true
-
-      // Return the HTTP redirect response
-      const oauthResponse =
-        await this.authorizationServer.completeAuthorizationRequest(authRequest)
-
-      return handleExpressResponse(response, oauthResponse)
-    } catch (error: any) {
-      // this re-throws the error that are not of type OAuthException, see the source code:
-      // https://github.com/jasonraimondi/ts-oauth2-server/blob/26ca01416bee1396235eb7e18b00d724b88560ae/src/adapters/express.ts#LL26C17-L26C35
-      if (error instanceof OAuthException) {
-        handleExpressError(error, response)
-      } else if (error instanceof EntityNotFoundError) {
-        response.status(401).json({ error: 'Invalid client ID.' })
-      } else {
-        response.status(500).json({ error: 'Internal server error.' })
-      }
-    }
-  }
-
-  async tokenTemporary(request: Express.Request, response: Express.Response) {
+  async issueToken(request: Express.Request, response: Express.Response) {
     try {
       const oauthResponse =
         await this.authorizationServer.respondToAccessTokenRequest(request)
+      console.log('OAuthResponse', oauthResponse)
       return handleExpressResponse(response, oauthResponse)
     } catch (error: any) {
-      handleExpressError(error, response)
+      // handleExpressError only handles OAuthExceptions and re-throws others
+      if (error instanceof OAuthException) {
+        handleExpressError(error, response)
+      } else if (error instanceof EntityNotFoundError) {
+        response.status(401).json({ error: 'Invalid credentials' })
+      } else {
+        response.status(500).json({ error: 'Internal server error' })
+      }
     }
   }
 }
