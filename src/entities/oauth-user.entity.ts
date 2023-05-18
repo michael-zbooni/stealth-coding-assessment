@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
+  Unique,
 } from 'typeorm'
 import { OAuthUser as OAuthUserInterface } from '@jmondi/oauth2-server'
 
@@ -23,6 +25,12 @@ export class OAuthUser implements OAuthUserInterface {
 
   @Column()
   hashedPassword!: string
+
+  @Column({ default: false })
+  active!: boolean
+
+  @Column({ unique: true })
+  activationToken!: string
 
   @CreateDateColumn()
   readonly createdAt!: Date
