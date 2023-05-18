@@ -4,6 +4,8 @@ import { EntityManager, EntityNotFoundError, Repository } from 'typeorm'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
+type MockValue = never
+
 // TODO: put all mock classes in one place
 class MockUserRepository extends Repository<OAuthUser> {
   constructor() {
@@ -163,6 +165,85 @@ describe('UserService', () => {
       ).rejects.toThrow(EntityNotFoundError)
 
       expect(baseRepositoryMock.save).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('#changePassword', () => {
+    const service = new UserService(baseRepositoryMock)
+    const user = Object.assign(new OAuthUser(), {
+      id: 1,
+      email: 'mike@gmail.com',
+      firstName: 'Mike',
+      lastName: 'Coo',
+      hashedPassword: 'i-am-a-very-sensitive-hash',
+      activationToken: 'i-am-a-very-sensitive-token',
+      active: true, // user should already be active when changing a password
+      createdAt: new Date('2023-01-01'),
+      updatedAt: new Date('2023-01-02'),
+    } as OAuthUser)
+
+    afterEach(() => {
+      jest.clearAllMocks()
+    })
+
+    it('returns the updated user with sensitive info redacted', () => {
+      baseRepositoryMock.save.mockResolvedValue(user)
+      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+
+      const actual = service.changePassword(1, 'yabadabadoo')
+      return expect(actual).resolves.toStrictEqual({
+        id: 1,
+        email: 'mike@gmail.com',
+        firstName: 'Mike',
+        lastName: 'Coo',
+        active: true,
+        createdAt: new Date('2023-01-01'),
+        updatedAt: new Date('2023-01-02'),
+      })
+    })
+
+    it('calls bcrypt with the plain text password password', async () => {
+      baseRepositoryMock.save.mockResolvedValue(user)
+      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+
+      await service.changePassword(1, 'yabadabadoo')
+      expect(bcrypt.hash).toHaveBeenCalledWith('yabadabadoo', 10)
+    })
+
+    it('finds the existing active user with the correct query', async () => {
+      baseRepositoryMock.save.mockResolvedValue(user)
+      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+
+      await service.changePassword(1, 'yabadabadoo')
+
+      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+          active: true,
+        },
+      })
+    })
+
+    it('saves the user with the updated password', async () => {
+      baseRepositoryMock.save.mockResolvedValue(user)
+      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+      jest
+        .spyOn(bcrypt, 'hash')
+        .mockResolvedValue('some-new-bcrypt-hash' as MockValue)
+
+      await service.changePassword(1, 'yabadabadoo')
+
+      expect(baseRepositoryMock.save).toHaveBeenCalledWith({
+        id: 1,
+        email: 'mike@gmail.com',
+        firstName: 'Mike',
+        lastName: 'Coo',
+        hashedPassword: 'some-new-bcrypt-hash',
+        activationToken: 'i-am-a-very-sensitive-token',
+        active: true,
+        createdAt: new Date('2023-01-01'),
+        updatedAt: new Date('2023-01-02'),
+      })
     })
   })
 })

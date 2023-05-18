@@ -46,4 +46,13 @@ export class UserService {
     const activeUser = await this.userRepository.save(user)
     return this.omitSensitiveData(activeUser)
   }
+
+  async changePassword(userId: number, newPassword: string) {
+    const user = await this.userRepository.findOneOrFail({
+      where: { id: userId, active: true },
+    })
+    user.hashedPassword = await hash(newPassword, 10)
+    const updatedUser = await this.userRepository.save(user)
+    return this.omitSensitiveData(updatedUser)
+  }
 }
