@@ -54,4 +54,31 @@ export class UserService {
     const updatedUser = await this.userRepository.save(user)
     return this.omitSensitiveData(updatedUser)
   }
+
+  async getUsers({
+    authenticated = false,
+    limit = 10,
+    offset = 0,
+  }: {
+    authenticated: boolean
+    limit: number
+    offset: number
+  }) {
+    const users = await this.userRepository.find({
+      where: { active: true },
+      select: {
+        id: authenticated,
+        email: authenticated,
+        firstName: true,
+        lastName: authenticated,
+        createdAt: authenticated,
+        updatedAt: authenticated,
+        hashedPassword: false,
+        activationToken: false,
+      },
+      take: limit,
+      skip: offset,
+    })
+    return users
+  }
 }
