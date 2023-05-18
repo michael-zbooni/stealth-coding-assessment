@@ -3,8 +3,9 @@ import { DataSource } from 'typeorm'
 
 import { SERVER_PORT } from './constants'
 import { mainDataSource } from './data-source'
-import { AuthController } from './controllers/auth.service'
+import { AuthController } from './controllers/auth.controller'
 import bodyParser from 'body-parser'
+import { userRouter } from './routers/user.router'
 
 const app = express()
 
@@ -24,6 +25,7 @@ function startServer() {
       res.send('Hello World!')
     })
     .post('/token', bindControllerMethod(authController, 'issueToken'))
+    .use('/users', userRouter)
     .listen(SERVER_PORT, () => {
       console.log(`Server running on port ${SERVER_PORT}`)
     })

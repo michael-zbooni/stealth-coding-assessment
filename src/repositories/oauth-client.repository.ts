@@ -12,7 +12,7 @@ export class OAuthClientRepository implements OAuthClientRepositoryInterface {
   async getByIdentifier(clientId: string): Promise<OAuthClient> {
     return this.baseRepository.findOneOrFail({
       where: { id: clientId },
-      relations: { scopes: true },
+      relations: { scopes: true }, // this does not do anything yet
     })
   }
 
