@@ -18,4 +18,12 @@ export class UserController {
   async verify({ query: { token } }: Express.Request) {
     return this.userService.activate(token as string) // query params can be of multiple types
   }
+
+  async list({ query: { limit = '10', offset = '0' } }: Express.Request) {
+    return this.userService.getUsers({
+      authenticated: false,
+      limit: Number(limit),
+      offset: Number(offset),
+    })
+  }
 }

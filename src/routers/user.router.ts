@@ -35,3 +35,4 @@ function toExpressCallback(controllerMethod: Express.RequestHandler) {
 userRouter
   .post('/', toExpressCallback(controller.register))
   .get('/verify', toExpressCallback(controller.verify))
+  .get('/', toExpressCallback(controller.list))
