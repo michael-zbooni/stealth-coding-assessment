@@ -47,8 +47,7 @@ export class AuthController {
 
   async issueToken(request: Express.Request, response: Express.Response) {
     try {
-      const oauthResponse =
-        await this.authorizationServer.respondToAccessTokenRequest(request)
+      const oauthResponse = await this.authorizationServer.respondToAccessTokenRequest(request)
       console.log('OAuthResponse', oauthResponse)
       return handleExpressResponse(response, oauthResponse)
     } catch (error) {

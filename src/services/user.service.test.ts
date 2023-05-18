@@ -156,13 +156,11 @@ describe('UserService', () => {
     })
 
     it('does not save the user if the activation token is invalid', async () => {
-      baseRepositoryMock.findOneOrFail.mockRejectedValue(
-        new EntityNotFoundError('OAuthUser', {}),
-      )
+      baseRepositoryMock.findOneOrFail.mockRejectedValue(new EntityNotFoundError('OAuthUser', {}))
 
-      await expect(
-        service.activate('i-am-a-very-sensitive-token'),
-      ).rejects.toThrow(EntityNotFoundError)
+      await expect(service.activate('i-am-a-very-sensitive-token')).rejects.toThrow(
+        EntityNotFoundError,
+      )
 
       expect(baseRepositoryMock.save).not.toHaveBeenCalled()
     })
@@ -227,9 +225,7 @@ describe('UserService', () => {
     it('saves the user with the updated password', async () => {
       baseRepositoryMock.save.mockResolvedValue(user)
       baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
-      jest
-        .spyOn(bcrypt, 'hash')
-        .mockResolvedValue('some-new-bcrypt-hash' as MockValue)
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('some-new-bcrypt-hash' as MockValue)
 
       await service.changePassword(1, 'yabadabadoo')
 

@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { OAuthUser as OAuthUserInterface } from '@jmondi/oauth2-server'
 
 @Entity('oauth_user') // the snake_case naming strategy will make this o_auth_user

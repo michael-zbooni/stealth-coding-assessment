@@ -60,10 +60,7 @@ describe('OAuthAuthCodeRepository', () => {
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as MockValue)
       await repository.getUserByCredentials('mike@gmail.com', 'yahoo')
 
-      return expect(bcrypt.compare).toHaveBeenCalledWith(
-        'yahoo',
-        'some-bcrypt-hash',
-      )
+      return expect(bcrypt.compare).toHaveBeenCalledWith('yahoo', 'some-bcrypt-hash')
     })
   })
 

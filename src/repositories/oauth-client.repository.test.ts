@@ -14,40 +14,26 @@ const baseRepositoryMock = new MockRepository()
 
 describe('OAuthClientRepository', () => {
   describe('#isClientValid', () => {
-    const confidentialClient = Object.assign<OAuthClient, Partial<OAuthClient>>(
-      new OAuthClient(),
-      {
-        allowedGrants: ['password'],
-        id: 'some-client-id',
-        name: 'Some Client',
-        secret: 'some-secret',
-      },
-    )
-    const publicClient = Object.assign<OAuthClient, Partial<OAuthClient>>(
-      new OAuthClient(),
-      {
-        allowedGrants: ['password'],
-        id: 'some-client-id',
-        name: 'Some Client',
-      },
-    )
+    const confidentialClient = Object.assign<OAuthClient, Partial<OAuthClient>>(new OAuthClient(), {
+      allowedGrants: ['password'],
+      id: 'some-client-id',
+      name: 'Some Client',
+      secret: 'some-secret',
+    })
+    const publicClient = Object.assign<OAuthClient, Partial<OAuthClient>>(new OAuthClient(), {
+      allowedGrants: ['password'],
+      id: 'some-client-id',
+      name: 'Some Client',
+    })
     const repository = new OAuthClientRepository(baseRepositoryMock)
 
     it('yields true if the client secret matches for confidential clients', () => {
-      const actual = repository.isClientValid(
-        'password',
-        confidentialClient,
-        'some-secret',
-      )
+      const actual = repository.isClientValid('password', confidentialClient, 'some-secret')
       expect(actual).resolves.toBe(true)
     })
 
     it('yields true if the client secret matches for confidential clients', () => {
-      const actual = repository.isClientValid(
-        'password',
-        confidentialClient,
-        'some-secret',
-      )
+      const actual = repository.isClientValid('password', confidentialClient, 'some-secret')
       expect(actual).resolves.toBe(true)
     })
 
@@ -59,14 +45,11 @@ describe('OAuthClientRepository', () => {
 
   describe('#getByIdentifier', () => {
     const repository = new OAuthClientRepository(baseRepositoryMock)
-    const client = Object.assign<OAuthClient, Partial<OAuthClient>>(
-      new OAuthClient(),
-      {
-        allowedGrants: ['password'],
-        id: 'some-client-id',
-        name: 'Some Client',
-      },
-    )
+    const client = Object.assign<OAuthClient, Partial<OAuthClient>>(new OAuthClient(), {
+      allowedGrants: ['password'],
+      id: 'some-client-id',
+      name: 'Some Client',
+    })
 
     afterEach(() => {
       jest.clearAllMocks()

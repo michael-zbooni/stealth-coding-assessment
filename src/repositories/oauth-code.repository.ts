@@ -24,11 +24,7 @@ export class OAuthCodeRepository implements OAuthAuthCodeRepositoryInterface {
     return authCode.isExpired
   }
 
-  issueAuthCode(
-    client: OAuthClient,
-    user: OAuthUser | undefined,
-    scopes: OAuthScope[],
-  ) {
+  issueAuthCode(client: OAuthClient, user: OAuthUser | undefined, scopes: OAuthScope[]) {
     const authCode = new OAuthCode()
     authCode.code = crypto.randomBytes(32).toString('base64url')
     authCode.expiresAt = new DateInterval('15m').getEndDate()

@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class MakeActivationColumnUnique1684397065140
-  implements MigrationInterface
-{
+export class MakeActivationColumnUnique1684397065140 implements MigrationInterface {
   name = 'MakeActivationColumnUnique1684397065140'
 
   public async up(queryRunner: QueryRunner): Promise<void> {

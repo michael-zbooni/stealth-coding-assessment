@@ -10,10 +10,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import {
-  CodeChallengeMethod,
-  OAuthAuthCode as OAuthAuthCodeInterface,
-} from '@jmondi/oauth2-server'
+import { CodeChallengeMethod, OAuthAuthCode as OAuthAuthCodeInterface } from '@jmondi/oauth2-server'
 
 import { OAuthClient } from './oauth-client.entity'
 import { OAuthScope } from './oauth-scope.entity'

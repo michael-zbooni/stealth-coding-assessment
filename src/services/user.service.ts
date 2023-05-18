@@ -4,10 +4,9 @@ import { hash } from 'bcrypt'
 import crypto from 'crypto'
 import _ from 'lodash'
 
-export type RegisterUserDTO = Pick<
-  OAuthUser,
-  'email' | 'firstName' | 'lastName'
-> & { plainTextPassword: string }
+export type RegisterUserDTO = Pick<OAuthUser, 'email' | 'firstName' | 'lastName'> & {
+  plainTextPassword: string
+}
 
 export type NewUser = Omit<RegisterUserDTO, 'plainTextPassword'> &
   Pick<OAuthUser, 'hashedPassword' | 'activationToken'>

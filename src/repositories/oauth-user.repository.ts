@@ -12,20 +12,14 @@ import { compare } from 'bcrypt'
 export class OAuthUserRepository implements OAuthUserRepositoryInterface {
   constructor(private readonly baseRepository: Repository<OAuthUser>) {}
 
-  async getUserByCredentials(
-    identifier: string,
-    plainTextPassword: string,
-  ): Promise<OAuthUser> {
+  async getUserByCredentials(identifier: string, plainTextPassword: string): Promise<OAuthUser> {
     const user = await this.baseRepository.findOneOrFail({
       where: { email: identifier },
     })
 
     // we do the bcrypt check here instead of user.service.ts as a constraint
     // from the OAuth2 server library
-    const correctPassword = await compare(
-      plainTextPassword,
-      user.hashedPassword,
-    )
+    const correctPassword = await compare(plainTextPassword, user.hashedPassword)
 
     if (!correctPassword) {
       throw new OAuthException('Invalid credentials', ErrorType.AccessDenied)
@@ -34,9 +28,7 @@ export class OAuthUserRepository implements OAuthUserRepositoryInterface {
     return user
   }
 
-  async extraAccessTokenFields(
-    user: OAuthUser,
-  ): Promise<ExtraAccessTokenFields | undefined> {
+  async extraAccessTokenFields(user: OAuthUser): Promise<ExtraAccessTokenFields | undefined> {
     return {
       email: user.email,
       firstName: user.firstName,

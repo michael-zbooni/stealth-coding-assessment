@@ -1,7 +1,4 @@
-import {
-  GrantIdentifier,
-  OAuthClient as OAuthClientInterface,
-} from '@jmondi/oauth2-server'
+import { GrantIdentifier, OAuthClient as OAuthClientInterface } from '@jmondi/oauth2-server'
 import {
   Column,
   CreateDateColumn,

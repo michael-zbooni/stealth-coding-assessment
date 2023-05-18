@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class AddColumnsForUserActivation1684396281100
-  implements MigrationInterface
-{
+export class AddColumnsForUserActivation1684396281100 implements MigrationInterface {
   name = 'AddColumnsForUserActivation1684396281100'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
