@@ -1,7 +1,6 @@
 import { Repository } from 'typeorm'
 import {
   DateInterval,
-  generateRandomToken,
   OAuthTokenRepository as OAuthTokenRepositoryInterface,
 } from '@jmondi/oauth2-server'
 import crypto from 'crypto'

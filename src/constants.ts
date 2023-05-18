@@ -1,4 +1,3 @@
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import type { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 
 export const SERVER_PORT = Number(process.env.PORT) || 3000

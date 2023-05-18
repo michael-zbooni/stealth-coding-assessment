@@ -4,8 +4,6 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  Index,
-  Unique,
 } from 'typeorm'
 import { OAuthUser as OAuthUserInterface } from '@jmondi/oauth2-server'
 

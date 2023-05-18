@@ -18,7 +18,6 @@ import { DataSource, EntityNotFoundError } from 'typeorm'
 import { JWT_SECRET } from '../constants'
 import Express from 'express'
 import {
-  requestFromExpress,
   handleExpressError,
   handleExpressResponse,
 } from '@jmondi/oauth2-server/dist/adapters/express'
@@ -52,7 +51,7 @@ export class AuthController {
         await this.authorizationServer.respondToAccessTokenRequest(request)
       console.log('OAuthResponse', oauthResponse)
       return handleExpressResponse(response, oauthResponse)
-    } catch (error: any) {
+    } catch (error) {
       // handleExpressError only handles OAuthExceptions and re-throws others
       if (error instanceof OAuthException) {
         handleExpressError(error, response)

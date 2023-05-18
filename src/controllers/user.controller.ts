@@ -1,6 +1,5 @@
 import Express from 'express'
 import { UserService } from '../services/user.service'
-import { OAuthUser } from '../entities/oauth-user.entity'
 
 export class UserController {
   constructor(private readonly userService: UserService) {}

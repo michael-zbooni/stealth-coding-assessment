@@ -11,7 +11,7 @@ const controller = new UserController(userService)
 export const userRouter = Router()
 
 // TODO: should be a generic function, accepting a controller as the second parameter
-function toExpressCallback(controllerMethod: Function) {
+function toExpressCallback(controllerMethod: Express.RequestHandler) {
   return async (
     request: Express.Request,
     response: Express.Response,

@@ -1,13 +1,10 @@
-import { Seeder, SeederFactoryManager } from 'typeorm-extension'
+import { Seeder } from 'typeorm-extension'
 import { DataSource } from 'typeorm'
 import { OAuthUser } from '../entities/oauth-user.entity'
 import { UserService } from '../services/user.service'
 
 export default class OAuthScopeSeeder implements Seeder {
-  public async run(
-    dataSource: DataSource,
-    factoryManager: SeederFactoryManager,
-  ): Promise<any> {
+  public async run(dataSource: DataSource): Promise<void> {
     const repository = dataSource.getRepository(OAuthUser)
     const userService = new UserService(repository)
 

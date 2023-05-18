@@ -1,5 +1,4 @@
 import express from 'express'
-import { DataSource } from 'typeorm'
 
 import { SERVER_PORT } from './constants'
 import { mainDataSource } from './data-source'
@@ -12,9 +11,7 @@ const app = express()
 const authController = new AuthController(mainDataSource)
 
 function bindControllerMethod<T>(controller: T, methodName: keyof T) {
-  if (typeof controller[methodName] === 'function') {
-    return (controller[methodName] as Function).bind(controller)
-  }
+  return (controller[methodName] as express.RequestHandler).bind(controller)
 }
 
 function startServer() {

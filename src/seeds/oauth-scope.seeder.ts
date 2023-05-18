@@ -1,13 +1,9 @@
-import { Seeder, SeederFactoryManager } from 'typeorm-extension'
+import { Seeder } from 'typeorm-extension'
 import { DataSource } from 'typeorm'
-import { v4 as uuidV4 } from 'uuid'
 import { OAuthScope } from '../entities/oauth-scope.entity'
 
 export default class OAuthScopeSeeder implements Seeder {
-  public async run(
-    dataSource: DataSource,
-    factoryManager: SeederFactoryManager,
-  ): Promise<any> {
+  public async run(dataSource: DataSource): Promise<void> {
     const repository = dataSource.getRepository(OAuthScope)
     await repository.insert([
       {
