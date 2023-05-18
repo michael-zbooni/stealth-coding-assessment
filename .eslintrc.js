@@ -8,7 +8,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
-  overrides: [],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
@@ -16,10 +15,12 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {},
-  overrides: {
-    files: ['*.js'],
-    rules: {
-      '@typescript-eslint/no-var-requires': 'off',
+  overrides: [
+    {
+      files: ['*.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
     },
-  },
+  ],
 }
