@@ -69,7 +69,7 @@ describe('OAuthClientRepository', () => {
       expect(actual).rejects.toThrowError(EntityNotFoundError)
     })
 
-    it('calls the base repository with the correct arguments', async () => {
+    it('queries the base repository correctly', async () => {
       await repository.getByIdentifier('some-client-id')
       expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
         where: { id: 'some-client-id' },

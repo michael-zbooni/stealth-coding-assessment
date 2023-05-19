@@ -31,36 +31,28 @@ describe('OAuthAuthCodeRepository', () => {
       jest.clearAllMocks()
     })
 
-    it('returns a user if the credentials are valid', () => {
+    it('returns a user if the credentials are valid', async () => {
       baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as MockValue)
-      const actual = repository.getUserByCredentials('mike@gmail.com', 'yahoo')
-      return expect(actual).resolves.toStrictEqual(user)
+
+      const actual = await repository.getUserByCredentials('mike@gmail.com', 'yahoo')
+      expect(bcrypt.compare).toHaveBeenCalledWith('yahoo', 'some-bcrypt-hash')
+      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { email: 'mike@gmail.com' },
+      })
+      expect(actual).toStrictEqual(user)
     })
 
-    it('returns a user if the credentials are invalid', () => {
+    it('throws if the credentials are invalid', async () => {
       baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as MockValue)
       const actual = repository.getUserByCredentials('mike@gmail.com', 'bahoo')
-      return expect(actual).rejects.toThrowError(OAuthException)
-    })
 
-    it('calls the base repository with the correct arguments', async () => {
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as MockValue)
-      await repository.getUserByCredentials('mike@gmail.com', 'yahoo')
-
-      return expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+      await expect(actual).rejects.toThrowError(OAuthException)
+      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
         where: { email: 'mike@gmail.com' },
       })
-    })
-
-    it('calls the bcrypt.compare with the correct arguments', async () => {
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as MockValue)
-      await repository.getUserByCredentials('mike@gmail.com', 'yahoo')
-
-      return expect(bcrypt.compare).toHaveBeenCalledWith('yahoo', 'some-bcrypt-hash')
+      expect(bcrypt.compare).toHaveBeenCalledWith('bahoo', 'some-bcrypt-hash')
     })
   })
 

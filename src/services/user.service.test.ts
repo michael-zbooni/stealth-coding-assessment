@@ -49,16 +49,25 @@ describe('UserService', () => {
       jest.clearAllMocks()
     })
 
-    it('returns a user with sensitive info redacted if the credentials are valid', () => {
+    it('hashes the password, generates an activation token, and redacts sensitive info', async () => {
       baseRepositoryMock.save.mockResolvedValue(user)
-      const actual = service.register({
+      const actual = await service.register({
         email: 'mike@gmail.com',
         firstName: 'Mike',
         lastName: 'Coo',
         plainTextPassword: 'yahoo',
       })
 
-      return expect(actual).resolves.toStrictEqual({
+      expect(bcrypt.hash).toHaveBeenCalledWith('yahoo', BCRYPT_ROUNDS)
+      expect(crypto.randomBytes).toHaveBeenCalledWith(32)
+      expect(baseRepositoryMock.save).toHaveBeenCalledWith({
+        email: 'mike@gmail.com',
+        firstName: 'Mike',
+        lastName: 'Coo',
+        hashedPassword: 'some-bcrypt-hash',
+        activationToken: 'i-am-a-very-sensitive-token',
+      })
+      expect(actual).toStrictEqual({
         id: 1,
         email: 'mike@gmail.com',
         firstName: 'Mike',
@@ -66,47 +75,6 @@ describe('UserService', () => {
         active: false,
         createdAt: new Date('2023-01-01'),
         updatedAt: new Date('2023-01-01'),
-      })
-    })
-
-    it('calls bcrypt with the plain text password password', async () => {
-      baseRepositoryMock.save.mockResolvedValue(user)
-      await service.register({
-        email: 'mike@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Coo',
-        plainTextPassword: 'yahoo',
-      })
-      expect(bcrypt.hash).toHaveBeenCalledWith('yahoo', BCRYPT_ROUNDS)
-    })
-
-    it('generates an activation token', async () => {
-      baseRepositoryMock.save.mockResolvedValue(user)
-      await service.register({
-        email: 'mike@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Coo',
-        plainTextPassword: 'yahoo',
-      })
-
-      expect(crypto.randomBytes).toHaveBeenCalledWith(32)
-    })
-
-    it('calls the base repository with the correct arguments', async () => {
-      baseRepositoryMock.save.mockResolvedValue(user)
-      await service.register({
-        email: 'mike@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Coo',
-        plainTextPassword: 'yahoo',
-      })
-
-      expect(baseRepositoryMock.save).toHaveBeenCalledWith({
-        email: 'mike@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Coo',
-        hashedPassword: 'some-bcrypt-hash',
-        activationToken: 'i-am-a-very-sensitive-token',
       })
     })
   })
@@ -129,13 +97,19 @@ describe('UserService', () => {
       jest.clearAllMocks()
     })
 
-    it('returns a user with sensitive info redacted if the credentials are valid', () => {
+    it('returns a user with sensitive info redacted if the credentials are valid', async () => {
       baseRepositoryMock.save.mockResolvedValue(user)
       baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
 
-      const actual = service.activate('i-am-a-very-sensitive-token')
+      const actual = await service.activate('i-am-a-very-sensitive-token')
 
-      return expect(actual).resolves.toStrictEqual({
+      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: {
+          activationToken: 'i-am-a-very-sensitive-token',
+          active: false,
+        },
+      })
+      expect(actual).toStrictEqual({
         id: 1,
         email: 'mike@gmail.com',
         firstName: 'Mike',
@@ -146,27 +120,17 @@ describe('UserService', () => {
       })
     })
 
-    it('calls the base repository with the correct arguments', async () => {
-      baseRepositoryMock.save.mockResolvedValue(user)
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
-
-      await service.activate('i-am-a-very-sensitive-token')
-
-      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
-        where: {
-          activationToken: 'i-am-a-very-sensitive-token',
-          active: false,
-        },
-      })
-    })
-
     it('does not save the user if the activation token is invalid', async () => {
       baseRepositoryMock.findOneOrFail.mockRejectedValue(new EntityNotFoundError('OAuthUser', {}))
 
-      await expect(service.activate('i-am-a-very-sensitive-token')).rejects.toThrow(
-        EntityNotFoundError,
-      )
+      await expect(service.activate('i-am-an-incorrect-token')).rejects.toThrow(EntityNotFoundError)
 
+      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: {
+          activationToken: 'i-am-an-incorrect-token',
+          active: false,
+        },
+      })
       expect(baseRepositoryMock.save).not.toHaveBeenCalled()
     })
   })
@@ -189,51 +153,19 @@ describe('UserService', () => {
       jest.clearAllMocks()
     })
 
-    it('returns the updated user with sensitive info redacted', () => {
+    it('returns the updated user with sensitive info redacted', async () => {
       baseRepositoryMock.save.mockResolvedValue(user)
       baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('some-new-bcrypt-hash' as MockValue)
 
-      const actual = service.changePassword(1, 'yabadabadoo')
-      return expect(actual).resolves.toStrictEqual({
-        id: 1,
-        email: 'mike@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Coo',
-        active: true,
-        createdAt: new Date('2023-01-01'),
-        updatedAt: new Date('2023-01-02'),
-      })
-    })
-
-    it('calls bcrypt with the plain text password password', async () => {
-      baseRepositoryMock.save.mockResolvedValue(user)
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
-
-      await service.changePassword(1, 'yabadabadoo')
-      expect(bcrypt.hash).toHaveBeenCalledWith('yabadabadoo', BCRYPT_ROUNDS)
-    })
-
-    it('finds the existing active user with the correct query', async () => {
-      baseRepositoryMock.save.mockResolvedValue(user)
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
-
-      await service.changePassword(1, 'yabadabadoo')
-
+      const actual = await service.changePassword(1, 'yabadabadoo')
       expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
         where: {
           id: 1,
           active: true,
         },
       })
-    })
-
-    it('saves the user with the updated password', async () => {
-      baseRepositoryMock.save.mockResolvedValue(user)
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
-      jest.spyOn(bcrypt, 'hash').mockResolvedValue('some-new-bcrypt-hash' as MockValue)
-
-      await service.changePassword(1, 'yabadabadoo')
-
+      expect(bcrypt.hash).toHaveBeenCalledWith('yabadabadoo', BCRYPT_ROUNDS)
       expect(baseRepositoryMock.save).toHaveBeenCalledWith({
         id: 1,
         email: 'mike@gmail.com',
@@ -241,6 +173,15 @@ describe('UserService', () => {
         lastName: 'Coo',
         hashedPassword: 'some-new-bcrypt-hash',
         activationToken: 'i-am-a-very-sensitive-token',
+        active: true,
+        createdAt: new Date('2023-01-01'),
+        updatedAt: new Date('2023-01-02'),
+      })
+      expect(actual).toStrictEqual({
+        id: 1,
+        email: 'mike@gmail.com',
+        firstName: 'Mike',
+        lastName: 'Coo',
         active: true,
         createdAt: new Date('2023-01-01'),
         updatedAt: new Date('2023-01-02'),
