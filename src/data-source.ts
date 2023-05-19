@@ -27,5 +27,5 @@ export const mainDataSource = new DataSource({
   migrations: [path.join(__dirname, './migrations/**/*.{ts,js}')],
   namingStrategy: new SnakeNamingStrategy(),
   subscribers: [],
-  seeds: [`./seeds/${createSeederGlob()}.seeder.ts`],
+  seeds: [path.join(__dirname, `./seeds/${createSeederGlob()}.seeder.ts`)],
 } as DataSourceOptions & SeederOptions)
