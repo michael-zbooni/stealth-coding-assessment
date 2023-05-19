@@ -1,6 +1,6 @@
 import { UserService } from './user.service'
 import { OAuthUser } from '../entities/oauth-user.entity'
-import { EntityManager, EntityNotFoundError, Repository } from 'typeorm'
+import { EntityManager, Repository } from 'typeorm'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 

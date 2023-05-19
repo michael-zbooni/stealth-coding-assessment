@@ -39,9 +39,9 @@ export class OAuthTokenRepository implements OAuthTokenRepositoryInterface {
     return token
   }
 
-  async getByRefreshToken(refreshTokenToken: string): Promise<OAuthToken> {
+  async getByRefreshToken(refreshToken: string): Promise<OAuthToken> {
     return this.baseRepository.findOneOrFail({
-      where: { refreshToken: refreshTokenToken },
+      where: { refreshToken },
       relations: {
         client: true,
         scopes: true,
