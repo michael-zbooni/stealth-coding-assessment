@@ -8,6 +8,7 @@ import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
 import fp from 'lodash/fp'
 import _ from 'lodash'
 import { EmailService } from './email.service'
+import { UserActivationException } from './user-activation.exception'
 
 type MockValue = never
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
@@ -19,6 +20,7 @@ class MockUserRepository extends Repository<OAuthUser> {
   }
 
   find = jest.fn()
+  findOne = jest.fn()
   findOneOrFail = jest.fn()
   save = jest.fn()
 }
@@ -112,14 +114,13 @@ describe('UserService', () => {
 
     it('returns a user with sensitive info redacted if the credentials are valid', async () => {
       baseRepositoryMock.save.mockResolvedValue(user)
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+      baseRepositoryMock.findOne.mockResolvedValue(user)
 
       const actual = await service.activate('i-am-a-very-sensitive-token')
 
-      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+      expect(baseRepositoryMock.findOne).toHaveBeenCalledWith({
         where: {
           activationToken: 'i-am-a-very-sensitive-token',
-          active: false,
         },
       })
       expect(actual).toStrictEqual({
@@ -134,14 +135,15 @@ describe('UserService', () => {
     })
 
     it('does not save the user if the activation token is invalid', async () => {
-      baseRepositoryMock.findOneOrFail.mockRejectedValue(new EntityNotFoundError('OAuthUser', {}))
+      baseRepositoryMock.findOne.mockResolvedValue(null)
 
-      await expect(service.activate('i-am-an-incorrect-token')).rejects.toThrow(EntityNotFoundError)
+      await expect(service.activate('i-am-an-incorrect-token')).rejects.toThrow(
+        UserActivationException,
+      )
 
-      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+      expect(baseRepositoryMock.findOne).toHaveBeenCalledWith({
         where: {
           activationToken: 'i-am-an-incorrect-token',
-          active: false,
         },
       })
       expect(baseRepositoryMock.save).not.toHaveBeenCalled()

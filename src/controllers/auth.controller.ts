@@ -18,7 +18,6 @@ import { OAuthUserRepository } from '../repositories/oauth-user.repository'
 import { DataSource, EntityNotFoundError } from 'typeorm'
 import { JWT_SECRET } from '../constants'
 import Express from 'express'
-import { handleExpressError } from '@jmondi/oauth2-server/dist/adapters/express'
 import _ from 'lodash'
 
 export class AuthController {
@@ -66,9 +65,9 @@ export class AuthController {
         )
     } catch (error) {
       // handleExpressError only handles OAuthExceptions and re-throws others
-      if (error instanceof OAuthException) {
-        handleExpressError(error, response)
-      } else if (error instanceof EntityNotFoundError) {
+      console.log('EEERRRROR', error)
+      if (error instanceof OAuthException || error instanceof EntityNotFoundError) {
+        // handleExpressError(error, response) // this one works but hard to control status code and message
         response.status(401).json({ error: 'Invalid credentials' })
       } else {
         response.status(500).json({ error: 'Internal server error' })

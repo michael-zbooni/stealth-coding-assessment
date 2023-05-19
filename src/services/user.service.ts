@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import _ from 'lodash'
 import { BCRYPT_ROUNDS, defaultPaginationLimits, API_URL } from '../constants'
 import { EmailService } from './email.service'
+import { UserActivationException } from './user-activation.exception'
 
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
 
@@ -59,9 +60,18 @@ export class UserService {
   }
 
   async activate(token: string) {
-    const user = await this.userRepository.findOneOrFail({
-      where: { activationToken: token, active: false },
+    const user = await this.userRepository.findOne({
+      where: { activationToken: token },
     })
+
+    if (!user) {
+      throw new UserActivationException('Invalid activation token')
+    }
+
+    if (user.active) {
+      throw new UserActivationException('User is already active')
+    }
+
     user.active = true
     return this.userRepository.save(user).then(this.omitSensitiveData)
   }
