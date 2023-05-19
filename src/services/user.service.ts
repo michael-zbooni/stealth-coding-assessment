@@ -3,7 +3,7 @@ import { OAuthUser } from '../entities/oauth-user.entity'
 import { hash } from 'bcrypt'
 import crypto from 'crypto'
 import _ from 'lodash'
-import { BCRYPT_ROUNDS, defaultPaginationLimits, API_URL } from '../constants'
+import { BCRYPT_ROUNDS, defaultPaginationLimits, BACKEND_URL } from '../constants'
 import { EmailService } from './email.service'
 import { UserActivationException } from './user-activation.exception'
 
@@ -51,7 +51,7 @@ export class UserService {
       const response = await this.emailService.sendVerificationEmail({
         toEmail: newUser.email,
         toName: newUser.firstName || 'there', // "Hello, Mike" or "Hello, there"
-        activationLink: `${API_URL}/users/verify?token=${newUser.activationToken}`,
+        activationLink: `${BACKEND_URL}/users/verify?token=${newUser.activationToken}`,
       })
       console.log('Email response', response) // just log it for now
     }
