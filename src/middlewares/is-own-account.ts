@@ -6,7 +6,7 @@ export default function isOwnAccount(
   response: Express.Response,
   next: Express.NextFunction,
 ) {
-  const { userId } = request.params
+  const { id: userId } = request.params
   const user = response.locals.user as OAuthUser | undefined
 
   if (!user) {

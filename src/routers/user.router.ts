@@ -8,6 +8,8 @@ import { validation } from '../middlewares/validation'
 import remapPasswordField from '../middlewares/remap-password-field'
 import { TypeORMError } from 'typeorm'
 import { validateChangePasswordRequest } from '../middlewares/validate-change-password-request'
+import isOwnAccount from '../middlewares/is-own-account'
+import { verifyToken } from '../middlewares/verify-token'
 
 const userRepository = mainDataSource.getRepository(OAuthUser)
 const userService = new UserService(userRepository)
@@ -46,7 +48,9 @@ userRouter
   .get('/:id', toExpressCallback(controller.getUser))
   .patch(
     '/:id/change-password',
+    verifyToken,
     remapPasswordField,
     validateChangePasswordRequest,
+    isOwnAccount,
     toExpressCallback(controller.changePassword),
   )

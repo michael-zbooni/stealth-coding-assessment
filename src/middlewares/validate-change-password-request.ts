@@ -20,7 +20,7 @@ export function validateChangePasswordRequest(
       minSymbols: 1,
     })
   ) {
-    next()
+    return next()
   }
 
   return response.status(400).json({ error: 'Password is not strong enough' })
