@@ -10,7 +10,7 @@ on:
     branches: [main]
 
 jobs:
-  build_and_qa:
+  qa_and_deploy:
     runs-on: ubuntu-latest
     container: node:lts
     env:
@@ -51,6 +51,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+
+      - name: Install NPM dependencies
+        run: npm ci
 
       - name: Typecheck
         run: npm run typecheck
