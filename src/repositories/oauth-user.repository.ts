@@ -14,7 +14,7 @@ export class OAuthUserRepository implements OAuthUserRepositoryInterface {
 
   async getUserByCredentials(identifier: string, plainTextPassword: string): Promise<OAuthUser> {
     const user = await this.baseRepository.findOneOrFail({
-      where: { email: identifier },
+      where: { email: identifier, active: true },
     })
 
     // we do the bcrypt check here instead of user.service.ts as a constraint

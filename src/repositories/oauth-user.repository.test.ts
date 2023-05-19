@@ -38,7 +38,7 @@ describe('OAuthAuthCodeRepository', () => {
       const actual = await repository.getUserByCredentials('mike@gmail.com', 'yahoo')
       expect(bcrypt.compare).toHaveBeenCalledWith('yahoo', 'some-bcrypt-hash')
       expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
-        where: { email: 'mike@gmail.com' },
+        where: { email: 'mike@gmail.com', active: true },
       })
       expect(actual).toStrictEqual(user)
     })
@@ -50,7 +50,7 @@ describe('OAuthAuthCodeRepository', () => {
 
       await expect(actual).rejects.toThrowError(OAuthException)
       expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
-        where: { email: 'mike@gmail.com' },
+        where: { email: 'mike@gmail.com', active: true },
       })
       expect(bcrypt.compare).toHaveBeenCalledWith('bahoo', 'some-bcrypt-hash')
     })
