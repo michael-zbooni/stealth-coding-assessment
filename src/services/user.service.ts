@@ -3,6 +3,7 @@ import { OAuthUser } from '../entities/oauth-user.entity'
 import { hash } from 'bcrypt'
 import crypto from 'crypto'
 import _ from 'lodash'
+import { BCRYPT_ROUNDS } from '../constants'
 
 export type RegisterUserDTO = Pick<OAuthUser, 'email' | 'firstName' | 'lastName'> & {
   plainTextPassword: string
@@ -30,7 +31,7 @@ export class UserService {
     const { plainTextPassword, ...otherUserInfo } = user
     const newUserDTO = {
       ...otherUserInfo,
-      hashedPassword: await hash(plainTextPassword, 10),
+      hashedPassword: await hash(plainTextPassword, BCRYPT_ROUNDS),
       activationToken: crypto.randomBytes(32).toString('base64url'),
     }
     const newUser = await this.userRepository.save<NewUser>(newUserDTO)
@@ -50,7 +51,7 @@ export class UserService {
     const user = await this.userRepository.findOneOrFail({
       where: { id: userId, active: true },
     })
-    user.hashedPassword = await hash(newPassword, 10)
+    user.hashedPassword = await hash(newPassword, BCRYPT_ROUNDS)
     const updatedUser = await this.userRepository.save(user)
     return this.omitSensitiveData(updatedUser)
   }

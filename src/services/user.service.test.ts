@@ -4,6 +4,8 @@ import { EntityManager, EntityNotFoundError, Repository } from 'typeorm'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
+import { BCRYPT_ROUNDS } from '../constants'
+
 type MockValue = never
 
 // TODO: put all mock classes in one place
@@ -72,7 +74,7 @@ describe('UserService', () => {
         lastName: 'Coo',
         plainTextPassword: 'yahoo',
       })
-      expect(bcrypt.hash).toHaveBeenCalledWith('yahoo', 10)
+      expect(bcrypt.hash).toHaveBeenCalledWith('yahoo', BCRYPT_ROUNDS)
     })
 
     it('generates an activation token', async () => {
@@ -205,7 +207,7 @@ describe('UserService', () => {
       baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
 
       await service.changePassword(1, 'yabadabadoo')
-      expect(bcrypt.hash).toHaveBeenCalledWith('yabadabadoo', 10)
+      expect(bcrypt.hash).toHaveBeenCalledWith('yabadabadoo', BCRYPT_ROUNDS)
     })
 
     it('finds the existing active user with the correct query', async () => {
