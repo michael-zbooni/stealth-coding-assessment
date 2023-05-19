@@ -25,6 +25,10 @@ function startServer() {
     .use('/users', userRouter)
     .listen(SERVER_PORT, () => {
       console.log(`Server running on port ${SERVER_PORT}`)
+
+      if (process.argv.includes('--debug')) {
+        console.log('Debug enabled: to attach debugger, use process ID: ', process.pid)
+      }
     })
 }
 

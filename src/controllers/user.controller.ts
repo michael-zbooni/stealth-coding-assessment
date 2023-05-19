@@ -30,4 +30,8 @@ export class UserController {
   async getUser({ params: { id } }: Express.Request) {
     return this.userService.getUser({ userId: Number(id), authenticated: false })
   }
+
+  async changePassword({ params: { id }, body: { plainTextPassword } }: Express.Request) {
+    return this.userService.changePassword(Number(id), plainTextPassword)
+  }
 }
