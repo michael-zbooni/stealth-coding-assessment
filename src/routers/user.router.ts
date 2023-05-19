@@ -4,6 +4,9 @@ import Express from 'express'
 import { OAuthUser } from '../entities/oauth-user.entity'
 import { UserService } from '../services/user.service'
 import { mainDataSource } from '../data-source'
+import { validation } from '../middlewares/validation'
+import remapPasswordField from '../middlewares/remap-password-field'
+import { TypeORMError } from 'typeorm'
 
 const userRepository = mainDataSource.getRepository(OAuthUser)
 const userService = new UserService(userRepository)
@@ -23,8 +26,11 @@ function toExpressCallback(controllerMethod: Express.RequestHandler) {
       console.log('result', result)
       response.json(result)
     } catch (error) {
-      if (error instanceof Error) {
-        response.status(500).json({ error: error.message })
+      if (error instanceof TypeORMError && error.message.includes('duplicate key')) {
+        // change User to something else when refactoring this function to be generic
+        response.status(409).json({ error: 'email already exists' })
+      } else if ((error as Error).message) {
+        response.status(500).json({ error: (error as Error).message })
       } else {
         response.status(500).json({ error: 'Internal server error' })
       }
@@ -33,7 +39,7 @@ function toExpressCallback(controllerMethod: Express.RequestHandler) {
 }
 
 userRouter
-  .post('/', toExpressCallback(controller.register))
+  .post('/', remapPasswordField, validation(OAuthUser), toExpressCallback(controller.register))
   .get('/verify', toExpressCallback(controller.verify))
   .get('/', toExpressCallback(controller.list))
   .get('/:id', toExpressCallback(controller.getUser))

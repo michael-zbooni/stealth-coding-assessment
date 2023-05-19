@@ -4,12 +4,12 @@ import { UserService } from '../services/user.service'
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  async register({ body: { firstName, lastName, email, password } }: Express.Request) {
+  async register({ body: { firstName, lastName, email, plainTextPassword } }: Express.Request) {
     const newUser = await this.userService.register({
       firstName,
       lastName,
       email,
-      plainTextPassword: password,
+      plainTextPassword,
     })
     console.log('newUser', newUser)
     return newUser

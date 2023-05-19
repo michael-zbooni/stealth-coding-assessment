@@ -7,9 +7,10 @@ import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
 
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
 
-export type RegisterUserDTO = Pick<OAuthUser, 'email' | 'firstName' | 'lastName'> & {
-  plainTextPassword: string
-}
+export type RegisterUserDTO = Pick<
+  OAuthUser,
+  'email' | 'firstName' | 'lastName' | 'plainTextPassword'
+>
 
 export type NewUser = Omit<RegisterUserDTO, 'plainTextPassword'> &
   Pick<OAuthUser, 'hashedPassword' | 'activationToken'>
@@ -24,7 +25,7 @@ export class UserService {
   constructor(private readonly userRepository: Repository<OAuthUser>) {}
 
   private omitSensitiveData(user: OAuthUser) {
-    return _.omit(user, ['hashedPassword', 'activationToken'])
+    return _.omit(user, ['plainTextPassword', 'hashedPassword', 'activationToken'])
   }
 
   async register(
@@ -33,10 +34,11 @@ export class UserService {
     const { plainTextPassword, ...otherUserInfo } = user
     const newUserDTO = {
       ...otherUserInfo,
-      hashedPassword: await hash(plainTextPassword, BCRYPT_ROUNDS),
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- we know it's not due to the validator
+      hashedPassword: await hash(plainTextPassword!, BCRYPT_ROUNDS),
       activationToken: crypto.randomBytes(32).toString('base64url'),
     }
-    return this.userRepository.save<NewUser>(newUserDTO).then(this.omitSensitiveData)
+    return this.userRepository.save(newUserDTO).then(this.omitSensitiveData)
   }
 
   async activate(token: string) {
