@@ -36,3 +36,4 @@ userRouter
   .post('/', toExpressCallback(controller.register))
   .get('/verify', toExpressCallback(controller.verify))
   .get('/', toExpressCallback(controller.list))
+  .get('/:id', toExpressCallback(controller.getUser))

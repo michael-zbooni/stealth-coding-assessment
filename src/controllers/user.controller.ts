@@ -26,4 +26,8 @@ export class UserController {
       offset: Number(offset),
     })
   }
+
+  async getUser({ params: { id } }: Express.Request) {
+    return this.userService.getUser({ userId: Number(id), authenticated: false })
+  }
 }
