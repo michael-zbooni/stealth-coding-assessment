@@ -1,17 +1,27 @@
 import Express from 'express'
 import { UserService } from '../services/user.service'
+import { EntityNotFoundError } from 'typeorm'
+import { GenericException } from '../exceptions/generic.exception'
+import { NotFoundException } from '../exceptions/not-found.exception'
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   async register({ body: { firstName, lastName, email, plainTextPassword } }: Express.Request) {
-    const newUser = await this.userService.register({
-      firstName,
-      lastName,
-      email,
-      plainTextPassword,
-    })
-    return newUser
+    try {
+      const newUser = await this.userService.register({
+        firstName,
+        lastName,
+        email,
+        plainTextPassword,
+      })
+      return newUser
+    } catch (error) {
+      if (error instanceof EntityNotFoundError && error.message.includes('duplicate key')) {
+        throw new GenericException('Email already exists', 409)
+      }
+      throw error
+    }
   }
 
   async verify({ query: { token } }: Express.Request) {
@@ -27,10 +37,24 @@ export class UserController {
   }
 
   async getUser({ params: { id } }: Express.Request) {
-    return this.userService.getUser({ userId: Number(id), authenticated: false })
+    try {
+      return await this.userService.getUser({ userId: Number(id), authenticated: false })
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException('User not found')
+      }
+      throw error
+    }
   }
 
   async changePassword({ params: { id }, body: { plainTextPassword } }: Express.Request) {
-    return this.userService.changePassword(Number(id), plainTextPassword)
+    try {
+      return await this.userService.changePassword(Number(id), plainTextPassword)
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException('User not found')
+      }
+      throw error
+    }
   }
 }

@@ -2,7 +2,6 @@ import { DataSource, DataSourceOptions } from 'typeorm'
 import { DATABASE_URL } from './constants'
 import { SeederOptions } from 'typeorm-extension'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
-import { logger } from './logger'
 import path from 'path'
 
 function createSeederGlob() {

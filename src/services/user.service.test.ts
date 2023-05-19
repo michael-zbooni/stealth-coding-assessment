@@ -8,7 +8,7 @@ import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
 import fp from 'lodash/fp'
 import _ from 'lodash'
 import { EmailService } from './email.service'
-import { UserActivationException } from './user-activation.exception'
+import { UserActivationException } from '../exceptions/user-activation.exception'
 
 type MockValue = never
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits

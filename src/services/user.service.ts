@@ -5,7 +5,7 @@ import crypto from 'crypto'
 import _ from 'lodash'
 import { BCRYPT_ROUNDS, defaultPaginationLimits, BACKEND_URL } from '../constants'
 import { EmailService } from './email.service'
-import { UserActivationException } from './user-activation.exception'
+import { UserActivationException } from '../exceptions/user-activation.exception'
 import { logger } from '../logger'
 
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
@@ -66,11 +66,11 @@ export class UserService {
     })
 
     if (!user) {
-      throw new UserActivationException('Invalid activation token')
+      throw new UserActivationException('Invalid activation token', 401)
     }
 
     if (user.active) {
-      throw new UserActivationException('User is already active')
+      throw new UserActivationException('User is already active', 400)
     }
 
     user.active = true
