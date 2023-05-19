@@ -1,9 +1,8 @@
-import 'reflect-metadata'
-
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { DATABASE_URL } from './constants'
 import { SeederOptions } from 'typeorm-extension'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
+import path from 'path'
 
 function createSeederGlob() {
   const { SEEDER_NAMES = '' } = process.env
@@ -24,8 +23,8 @@ export const mainDataSource = new DataSource({
   url: DATABASE_URL,
   synchronize: false,
   logging: true,
-  entities: ['./entities/**/*.entity.ts'],
-  migrations: ['./migrations/**/*.ts'],
+  entities: [path.join(__dirname, './entities/**/*.entity.{ts,js}')],
+  migrations: [path.join(__dirname, './migrations/**/*.{ts,js}')],
   namingStrategy: new SnakeNamingStrategy(),
   subscribers: [],
   seeds: [`./seeds/${createSeederGlob()}.seeder.ts`],
