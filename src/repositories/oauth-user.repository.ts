@@ -28,11 +28,7 @@ export class OAuthUserRepository implements OAuthUserRepositoryInterface {
     return user
   }
 
-  async extraAccessTokenFields(user: OAuthUser): Promise<ExtraAccessTokenFields | undefined> {
-    return {
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    }
+  async extraAccessTokenFields(_user: OAuthUser): Promise<ExtraAccessTokenFields | undefined> {
+    return {}
   }
 }

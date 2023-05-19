@@ -65,13 +65,9 @@ describe('OAuthAuthCodeRepository', () => {
       lastName: 'Coo',
     })
 
-    it('adds extra fields to the OAuth bearer token (JWT)', async () => {
+    it('does not add extra fields to the OAuth bearer token (JWT)', async () => {
       const actual = await repository.extraAccessTokenFields(user)
-      return expect(actual).toStrictEqual({
-        email: 'mike@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Coo',
-      })
+      return expect(actual).toStrictEqual({})
     })
   })
 })
