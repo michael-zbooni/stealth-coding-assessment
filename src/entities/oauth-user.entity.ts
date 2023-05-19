@@ -1,18 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { OAuthUser as OAuthUserInterface } from '@jmondi/oauth2-server'
-import { IsEmail, IsNotEmpty, IsStrongPassword } from 'class-validator'
+import { IsEmail, IsStrongPassword } from 'class-validator'
 
 @Entity('oauth_user') // the snake_case naming strategy will make this o_auth_user
 export class OAuthUser implements OAuthUserInterface {
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column()
-  @IsNotEmpty()
+  @Column({ nullable: true })
   firstName!: string
 
-  @Column()
-  @IsNotEmpty()
+  @Column({ nullable: true })
   lastName!: string
 
   @Column({ unique: true })
