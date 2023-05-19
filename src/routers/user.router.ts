@@ -45,7 +45,7 @@ userRouter
   .get('/', toExpressCallback(controller.list))
   .get('/:id', toExpressCallback(controller.getUser))
   .patch(
-    '/:id/changePassword',
+    '/:id/change-password',
     remapPasswordField,
     validateChangePasswordRequest,
     toExpressCallback(controller.changePassword),
