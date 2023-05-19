@@ -12,7 +12,7 @@ describe('EmailService', () => {
       const emailService = new EmailService()
       const sendSpy = jest.spyOn(emailjs, 'send').mockResolvedValue({ status: 200, text: 'OK' })
 
-      const response = await emailService.sendVerificationEmail({
+      await emailService.sendVerificationEmail({
         toEmail: 'mike@gmail.com',
         toName: 'there',
         activationLink: 'http://localhost:3000/users/verify?token=123',

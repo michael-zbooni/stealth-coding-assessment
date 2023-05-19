@@ -27,8 +27,8 @@ export class EmailService {
       EMAIL_JS_ACTIVATION_TEMPLATE_ID,
       templateParams,
       {
-        publicKey: EMAIL_JS_PUBLIC_KEY!,
-        privateKey: EMAIL_JS_PRIVATE_KEY!,
+        publicKey: EMAIL_JS_PUBLIC_KEY!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        privateKey: EMAIL_JS_PRIVATE_KEY!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
       },
     )
 
