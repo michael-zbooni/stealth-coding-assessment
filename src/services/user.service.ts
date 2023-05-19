@@ -3,7 +3,9 @@ import { OAuthUser } from '../entities/oauth-user.entity'
 import { hash } from 'bcrypt'
 import crypto from 'crypto'
 import _ from 'lodash'
-import { BCRYPT_ROUNDS } from '../constants'
+import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
+
+const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
 
 export type RegisterUserDTO = Pick<OAuthUser, 'email' | 'firstName' | 'lastName'> & {
   plainTextPassword: string
@@ -53,29 +55,40 @@ export class UserService {
     return this.userRepository.save(user).then(this.omitSensitiveData)
   }
 
+  private generateSelect(authenticated: boolean) {
+    return {
+      id: authenticated,
+      email: authenticated,
+      firstName: true,
+      lastName: authenticated,
+      createdAt: authenticated,
+      updatedAt: authenticated,
+      hashedPassword: false,
+      activationToken: false,
+    }
+  }
+
   async getUsers({
     authenticated = false,
-    limit = 10,
+    limit = USERS_DEFAULT_PAGINATION_LIMIT,
     offset = 0,
   }: {
     authenticated: boolean
-    limit: number
-    offset: number
+    limit?: number
+    offset?: number
   }) {
     return this.userRepository.find({
       where: { active: true },
-      select: {
-        id: authenticated,
-        email: authenticated,
-        firstName: true,
-        lastName: authenticated,
-        createdAt: authenticated,
-        updatedAt: authenticated,
-        hashedPassword: false,
-        activationToken: false,
-      },
+      select: this.generateSelect(authenticated),
       take: limit,
       skip: offset,
+    })
+  }
+
+  async getUser({ userId, authenticated }: { userId: number; authenticated: boolean }) {
+    return this.userRepository.findOneOrFail({
+      where: { id: userId, active: true },
+      select: this.generateSelect(authenticated),
     })
   }
 }

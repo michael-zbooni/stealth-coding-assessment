@@ -7,6 +7,11 @@ export const JWT_SECRET = process.env.JWT_SECRET
 
 export const BCRYPT_ROUNDS = Number(process.env.BCRYPT_ROUNDS) || 10 // bcrypt library default
 
+export const defaultPaginationLimits = Object.freeze({
+  DEFAULT: 20,
+  USERS: 20,
+})
+
 export const postgresConfig: Readonly<PostgresConnectionOptions> = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST || '127.0.0.1',
