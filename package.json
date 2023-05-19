@@ -21,6 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "@commitlint/config-conventional": "^17.6.3",
+    "@emailjs/nodejs": "^2.2.0",
     "@jmondi/oauth2-server": "^2.6.1",
     "@types/pg": "^8.6.6",
     "bcrypt": "^5.1.0",
