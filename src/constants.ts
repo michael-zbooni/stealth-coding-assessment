@@ -1,5 +1,7 @@
 import type { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 
+export const API_URL = process.env.API_URL || 'http://localhost:3000'
+
 export const SERVER_PORT = Number(process.env.PORT) || 3000
 
 // no fallback secret to avoid accidents with missing env var
@@ -20,3 +22,12 @@ export const postgresConfig: Readonly<PostgresConnectionOptions> = {
   password: process.env.POSTGRES_PASSWORD || 'postgres',
   database: process.env.POSTGRES_DATABASE || 'stealth_assessment',
 }
+
+export const emailjsConfig = Object.freeze({
+  publicKey: process.env.EMAILJS_PUBLIC_KEY, // no fallback, be sure to put these in .env
+  privateKey: process.env.EMAILJS_PRIVATE_KEY, // no fallback, be sure to put these in .env
+  serviceId: process.env.EMAILJS_SERVICE_ID ?? 'service_vuq08vk',
+  templates: {
+    activation: process.env.EMAILJS_TEMPLATE_ACTIVATION ?? 'template_q0ob4ri',
+  },
+})

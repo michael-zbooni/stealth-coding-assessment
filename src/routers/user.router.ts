@@ -10,9 +10,11 @@ import { TypeORMError } from 'typeorm'
 import { validateChangePasswordRequest } from '../middlewares/validate-change-password-request'
 import isOwnAccount from '../middlewares/is-own-account'
 import { verifyToken } from '../middlewares/verify-token'
+import { EmailService } from '../services/email.service'
 
 const userRepository = mainDataSource.getRepository(OAuthUser)
-const userService = new UserService(userRepository)
+const emailService = new EmailService()
+const userService = new UserService(userRepository, emailService)
 const controller = new UserController(userService)
 export const userRouter = Router()
 

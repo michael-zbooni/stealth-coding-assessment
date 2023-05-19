@@ -3,7 +3,8 @@ import { OAuthUser } from '../entities/oauth-user.entity'
 import { hash } from 'bcrypt'
 import crypto from 'crypto'
 import _ from 'lodash'
-import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
+import { BCRYPT_ROUNDS, defaultPaginationLimits, API_URL } from '../constants'
+import { EmailService } from './email.service'
 
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
 
@@ -22,7 +23,10 @@ export type NewUser = Omit<RegisterUserDTO, 'plainTextPassword'> &
  * in oauth-user.repository.ts.
  */
 export class UserService {
-  constructor(private readonly userRepository: Repository<OAuthUser>) {}
+  constructor(
+    private readonly userRepository: Repository<OAuthUser>,
+    private readonly emailService?: EmailService,
+  ) {}
 
   private omitSensitiveData(user: OAuthUser) {
     return _.omit(user, ['plainTextPassword', 'hashedPassword', 'activationToken'])
@@ -38,7 +42,20 @@ export class UserService {
       hashedPassword: await hash(plainTextPassword!, BCRYPT_ROUNDS),
       activationToken: crypto.randomBytes(32).toString('base64url'),
     }
-    return this.userRepository.save(newUserDTO).then(this.omitSensitiveData)
+
+    const newUser = await this.userRepository.save(newUserDTO)
+
+    // seeds don't need to send emails
+    if (this.emailService) {
+      const response = await this.emailService.sendVerificationEmail({
+        toEmail: newUser.email,
+        toName: newUser.firstName || 'there', // "Hello, Mike" or "Hello, there"
+        activationLink: `${API_URL}/users/verify?token=${newUser.activationToken}`,
+      })
+      console.log('Email response', response) // just log it for now
+    }
+
+    return this.omitSensitiveData(newUser)
   }
 
   async activate(token: string) {

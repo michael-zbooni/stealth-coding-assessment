@@ -7,6 +7,7 @@ import crypto from 'crypto'
 import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
 import fp from 'lodash/fp'
 import _ from 'lodash'
+import { EmailService } from './email.service'
 
 type MockValue = never
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
@@ -22,7 +23,12 @@ class MockUserRepository extends Repository<OAuthUser> {
   save = jest.fn()
 }
 
+class MockEmailService extends EmailService {
+  sendVerificationEmail = jest.fn()
+}
+
 const baseRepositoryMock = new MockUserRepository()
+const emailServiceMock = new MockEmailService()
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('some-bcrypt-hash'),
@@ -33,7 +39,7 @@ jest.mock('crypto', () => ({
 
 describe('UserService', () => {
   describe('#register', () => {
-    const service = new UserService(baseRepositoryMock)
+    const service = new UserService(baseRepositoryMock, emailServiceMock)
     const user = Object.assign(new OAuthUser(), {
       id: 1,
       email: 'mike@gmail.com',
@@ -50,8 +56,9 @@ describe('UserService', () => {
       jest.clearAllMocks()
     })
 
-    it('hashes the password, generates an activation token, and redacts sensitive info', async () => {
+    it('hashes the password, generates an activation token, sends email, and redacts sensitive info', async () => {
       baseRepositoryMock.save.mockResolvedValue(user)
+      emailServiceMock.sendVerificationEmail.mockResolvedValue({ status: 200, text: 'OK' })
       const actual = await service.register({
         email: 'mike@gmail.com',
         firstName: 'Mike',
@@ -68,6 +75,11 @@ describe('UserService', () => {
         hashedPassword: 'some-bcrypt-hash',
         activationToken: 'i-am-a-very-sensitive-token',
       })
+      expect(emailServiceMock.sendVerificationEmail).toHaveBeenCalledWith({
+        toName: 'Mike',
+        toEmail: 'mike@gmail.com',
+        activationLink: 'http://localhost:3000/users/verify?token=i-am-a-very-sensitive-token',
+      })
       expect(actual).toStrictEqual({
         id: 1,
         email: 'mike@gmail.com',
@@ -81,7 +93,7 @@ describe('UserService', () => {
   })
 
   describe('#activate', () => {
-    const service = new UserService(baseRepositoryMock)
+    const service = new UserService(baseRepositoryMock, emailServiceMock)
     const user = Object.assign(new OAuthUser(), {
       id: 1,
       email: 'mike@gmail.com',
@@ -137,7 +149,7 @@ describe('UserService', () => {
   })
 
   describe('#changePassword', () => {
-    const service = new UserService(baseRepositoryMock)
+    const service = new UserService(baseRepositoryMock, emailServiceMock)
     const user = Object.assign(new OAuthUser(), {
       id: 1,
       email: 'mike@gmail.com',
@@ -191,7 +203,7 @@ describe('UserService', () => {
   })
 
   describe('#getUsers', () => {
-    const service = new UserService(baseRepositoryMock)
+    const service = new UserService(baseRepositoryMock, emailServiceMock)
     const user = Object.assign(new OAuthUser(), {
       id: 1,
       email: 'mike@gmail.com',
@@ -285,7 +297,7 @@ describe('UserService', () => {
   })
 
   describe('#getUser', () => {
-    const service = new UserService(baseRepositoryMock)
+    const service = new UserService(baseRepositoryMock, emailServiceMock)
     const user = Object.assign(new OAuthUser(), {
       id: 1,
       email: 'mike@gmail.com',
