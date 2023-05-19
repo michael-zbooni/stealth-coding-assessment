@@ -12,6 +12,7 @@ import { verifyToken } from '../middlewares/verify-token'
 import { EmailService } from '../services/email.service'
 import { logger } from '../logger'
 import { GenericException } from '../exceptions/generic.exception'
+import { validatePaginationParams } from '../middlewares/validate-pagination-params'
 
 const userRepository = mainDataSource.getRepository(OAuthUser)
 const emailService = new EmailService()
@@ -43,7 +44,7 @@ function toHandler(controllerMethod: Express.RequestHandler) {
 
 userRouter
   .post('/', remapPasswordField, validation(OAuthUser), toHandler(controller.register))
-  .get('/', toHandler(controller.list))
+  .get('/', validatePaginationParams, toHandler(controller.list))
   .get('/verify', toHandler(controller.verify))
   .get('/:id', toHandler(controller.getUser)) // must be below /verify, else verify is treated as an /:id
   .patch(
