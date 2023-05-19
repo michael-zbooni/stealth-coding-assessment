@@ -10,6 +10,9 @@ import {
 } from 'typeorm'
 import { OAuthScope } from './oauth-scope.entity'
 
+/**
+ * An OAuth2 client entity.  Required by the @jmondi/oauth2-server library.
+ */
 @Entity('oauth_client') // the snake_case naming strategy will make this o_auth_client
 export class OAuthClient implements OAuthClientInterface {
   @PrimaryColumn('uuid')

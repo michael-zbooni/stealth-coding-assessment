@@ -14,7 +14,18 @@ interface ActivationEmailParams {
   activationLink: string
 }
 
+/**
+ * A service that sends emails.  The implementation is currently using emailjs, but this could be
+ * swapped out for another service.
+ */
 export class EmailService {
+  /**
+   * Sends an email to a user to activate their account.
+   * @param param0.toEmail - The email address to send the email to.
+   * @param param0.toName - The name of the user to send the email to.
+   * @param param0.activationLink - The link that the user should click to activate their account.
+   * @returns A promise that resolves when the email is sent.
+   */
   async sendVerificationEmail({ toEmail, toName, activationLink }: ActivationEmailParams) {
     const templateParams = {
       to_name: toName,

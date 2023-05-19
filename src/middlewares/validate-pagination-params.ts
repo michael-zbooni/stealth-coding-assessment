@@ -2,6 +2,13 @@ import Express from 'express'
 
 import { isNumberString } from 'class-validator'
 
+/**
+ * Validates that the pagination params are valid.
+ *
+ * @param request - the request object from Express
+ * @param response - the response object from Express
+ * @param next - the next function from Express
+ */
 export function validatePaginationParams(
   request: Express.Request,
   response: Express.Response,

@@ -4,21 +4,40 @@ import { EntityNotFoundError } from 'typeorm'
 import { GenericException } from '../exceptions/generic.exception'
 import { NotFoundException } from '../exceptions/not-found.exception'
 import { Controller } from './controller'
+import { OAuthUser } from '../entities/oauth-user.entity'
 
+export type UnauthenticatedUserResponse = Pick<OAuthUser, 'firstName'>
+export type AuthenticatedUserResponse = Omit<OAuthUser, 'hashedPassword' | 'activationToken'>
+
+/**
+ * Handles all /users routes.
+ */
 export class UserController extends Controller {
   constructor(private readonly userService: UserService) {
     super()
   }
 
-  async register({ body: { firstName, lastName, email, plainTextPassword } }: Express.Request) {
+  /**
+   * Registers a new user.
+   *
+   * @param param0 - the request object from Express (destructured)
+   * @param param0.body.firstName - the user's first name
+   * @param param0.body.lastName - the user's last name
+   * @param param0.body.email - the user's email
+   * @param param0.body.plainTextPassword - the user's password
+   *
+   * @returns A promise that resolves to the newly created user, minus the sensitive data
+   */
+  async register({
+    body: { firstName, lastName, email, plainTextPassword },
+  }: Express.Request): Promise<Omit<OAuthUser, 'hashedPassword' | 'activationToken'>> {
     try {
-      const newUser = await this.userService.register({
+      return await this.userService.register({
         firstName,
         lastName,
         email,
         plainTextPassword,
       })
-      return newUser
     } catch (error) {
       if (error instanceof EntityNotFoundError && error.message.includes('duplicate key')) {
         throw new GenericException('Email already exists', 409)
@@ -27,21 +46,60 @@ export class UserController extends Controller {
     }
   }
 
-  async verify({ query: { token } }: Express.Request) {
+  /**
+   * Verifies a user's email address.
+   *
+   * @param param0 - the request object from Express (destructured)
+   * @param param0.query.token - the verification token
+   *
+   * @returns A promise that resolves to the newly created user, with his/her active status set to true
+   */
+  async verify({
+    query: { token },
+  }: Express.Request): Promise<Omit<OAuthUser, 'hashedPassword' | 'activationToken'>> {
     return this.userService.activate(token as string) // query params can be of multiple types
   }
 
-  async list({ query: { limit, offset } }: Express.Request) {
+  /**
+   * Gets a list of users, with forced pagination to not overload the server.
+   *
+   * @param param0 - the request object from Express (destructured)
+   * @param param0.query.limit - the number of users to return
+   * @param param0.query.offset - the number of users to skip
+   *
+   * @param param1 - the response object from Express (destructured)
+   * @param param1.locals.user - the authenticated user (or undefined if not authenticated)
+   *
+   * @returns A promise that resolves to an array of users
+   */
+  async list(
+    { query: { limit, offset } }: Express.Request,
+    { locals: { user } }: Express.Response,
+  ): Promise<AuthenticatedUserResponse[] | UnauthenticatedUserResponse[]> {
     return this.userService.getUsers({
-      authenticated: false,
+      authenticated: Boolean(user),
       limit: Number(limit),
       offset: Number(offset),
     })
   }
 
-  async getUser({ params: { id } }: Express.Request) {
+  /**
+   * Gets a single user.
+   *
+   * @param param0 - the request object from Express (destructured)
+   * @param param0.params.id - the user's ID
+   *
+   * @param param1 - the response object from Express (destructured)
+   * @param param1.locals.user - the authenticated user (or undefined if not authenticated)
+   *
+   * @returns A promise that resolves to a single user
+   */
+  async getUser(
+    { params: { id } }: Express.Request,
+    { locals: { user } }: Express.Response,
+  ): Promise<AuthenticatedUserResponse | UnauthenticatedUserResponse> {
     try {
-      return await this.userService.getUser({ userId: Number(id), authenticated: false })
+      return await this.userService.getUser({ userId: Number(id), authenticated: Boolean(user) })
     } catch (error) {
       if (error instanceof EntityNotFoundError) {
         throw new NotFoundException('User not found')
@@ -50,7 +108,19 @@ export class UserController extends Controller {
     }
   }
 
-  async changePassword({ params: { id }, body: { plainTextPassword } }: Express.Request) {
+  /**
+   * Changes a user's password.
+   *
+   * @param param0 - the request object from Express (destructured)
+   * @param param0.params.id - the user's ID
+   * @param param0.body.plainTextPassword - the user's new password
+   *
+   * @returns A promise that resolves to the updated user
+   */
+  async changePassword({
+    params: { id },
+    body: { plainTextPassword },
+  }: Express.Request): Promise<AuthenticatedUserResponse> {
     try {
       return await this.userService.changePassword(Number(id), plainTextPassword)
     } catch (error) {

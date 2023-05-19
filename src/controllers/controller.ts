@@ -2,8 +2,19 @@ import { GenericException } from '../exceptions/generic.exception'
 import { logger } from '../logger'
 import Express from 'express'
 
+/**
+ * Base controller class
+ */
 export abstract class Controller {
-  handle(methodName: keyof this) {
+  /**
+   * Creates an handler for controller methods that follow the Nest.js or routing-controllers
+   * paradigm (i.e. they return values rather than calling `response.json()` directly).  This makes
+   * it easier to test (no need to spy on `response.json`).
+   *
+   * @param methodName - the name of the method to handle
+   * @returns An Express handler (.ie. a `(request, response, next) => void` function)
+   */
+  handle(methodName: keyof this): Express.RequestHandler {
     return async (
       request: Express.Request,
       response: Express.Response,

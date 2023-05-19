@@ -3,6 +3,9 @@ import { DataSource } from 'typeorm'
 import { OAuthUser } from '../entities/oauth-user.entity'
 import { UserService } from '../services/user.service'
 
+/**
+ * Seeds the oauth_user table with a single user.
+ */
 export default class OAuthScopeSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<void> {
     const repository = dataSource.getRepository(OAuthUser)

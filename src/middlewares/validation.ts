@@ -1,9 +1,17 @@
+import Express from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { Request, Response, NextFunction } from 'express'
 import _ from 'lodash'
 
-export const validation = <T extends object>(classType: new () => T) => {
+/**
+ * Creates a middleware function that Validates the request body against the validation rules
+ * defined in the entity class.
+ *
+ * @param classType - the class of the entity to validate
+ * @returns the validation middleware
+ */
+export const validation = <T extends object>(classType: new () => T): Express.RequestHandler => {
   return async function validationMiddleware(
     request: Request,
     response: Response,

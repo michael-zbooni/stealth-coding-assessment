@@ -16,6 +16,9 @@ import { OAuthClient } from './oauth-client.entity'
 import { OAuthScope } from './oauth-scope.entity'
 import { OAuthUser } from './oauth-user.entity'
 
+/**
+ * An OAuth2 token entity.  Required by the @jmondi/oauth2-server library.
+ */
 @Entity('oauth_token') // the snake_case naming strategy will make this o_auth_token
 export class OAuthToken implements OAuthTokenInterface {
   @PrimaryColumn('varchar', { length: 128 })
@@ -69,10 +72,16 @@ export class OAuthToken implements OAuthTokenInterface {
   @UpdateDateColumn()
   updatedAt!: Date
 
+  /**
+   * Returns true if the access token has expired.
+   */
   get isRevoked() {
     return Date.now() > this.accessTokenExpiresAt.getTime()
   }
 
+  /**
+   * Revokes the access and refresh tokens.
+   */
   revoke() {
     this.accessTokenExpiresAt = new Date(0)
     this.refreshTokenExpiresAt = new Date(0)

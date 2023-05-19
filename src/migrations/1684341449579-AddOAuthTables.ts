@@ -1,5 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
+/**
+ * The first ever migration. Creates the oauth tables.
+ */
 export class AddOAuthTables1684341449579 implements MigrationInterface {
   name = 'AddOAuthTables1684341449579'
 

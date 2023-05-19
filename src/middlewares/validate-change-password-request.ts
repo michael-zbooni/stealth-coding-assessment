@@ -1,6 +1,13 @@
 import Express from 'express'
 import { isStrongPassword } from 'class-validator'
 
+/**
+ * Validates that the user's new password is strong enough.
+ *
+ * @param request - the request object from Express
+ * @param response - the response object from Express
+ * @param next - the next function from Express
+ */
 export function validateChangePasswordRequest(
   request: Express.Request,
   response: Express.Response,

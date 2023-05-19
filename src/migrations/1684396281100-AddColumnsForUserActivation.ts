@@ -1,5 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
+/**
+ * This migration adds columns for user activation.
+ */
 export class AddColumnsForUserActivation1684396281100 implements MigrationInterface {
   name = 'AddColumnsForUserActivation1684396281100'
 

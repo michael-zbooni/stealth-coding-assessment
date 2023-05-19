@@ -23,6 +23,15 @@ import { logger } from '../logger'
 import { Controller } from './controller'
 import { UnauthorizedException } from '../exceptions/unauthorized.exception'
 
+export type OAuthTokenResponse = Pick<
+  OAuthToken,
+  'accessToken' | 'accessTokenExpiresAt' | 'refreshToken' | 'refreshTokenExpiresAt'
+>
+
+/**
+ * This controller handles the OAuth2 Password grant flow, since it's the flow required by the coding
+ * exercise.  Other OAuth2 flows were removed.
+ */
 export class AuthController extends Controller {
   private readonly authorizationServer: AuthorizationServer
 
@@ -47,7 +56,17 @@ export class AuthController extends Controller {
   // incomplete, and actually not needed for the coding exercise, and so was removed.
   // See this commit to revive: https://github.com/myknbani/stealth-coding-assessment/commit/3a5beb0
 
-  async issueToken(request: Express.Request, _response: Express.Response) {
+  /**
+   * Issues tokens for the Password grant flow, or an access token for the Refresh Token grant flow.
+   *
+   * @param request - the request object from Express
+   * @param _response - the response object from Express
+   * @returns A promise that contains access and refresh tokens, and their expiry.
+   */
+  async issueToken(
+    request: Express.Request,
+    _response: Express.Response,
+  ): Promise<OAuthTokenResponse> {
     try {
       const oauthResponse = (await this.authorizationServer.respondToAccessTokenRequest(
         request,

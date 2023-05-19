@@ -3,6 +3,10 @@ import { DataSource } from 'typeorm'
 import { OAuthClient } from '../entities/oauth-client.entity'
 import { v4 as uuidV4 } from 'uuid'
 
+/**
+ * Seeds the oauth_client table with a public and a confidential client.  The public client has the
+ * UUID hardcoded for easier testing.
+ */
 export default class OAuthClientSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<void> {
     const repository = dataSource.getRepository(OAuthClient)

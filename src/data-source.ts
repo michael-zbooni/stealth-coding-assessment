@@ -4,6 +4,11 @@ import { SeederOptions } from 'typeorm-extension'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import path from 'path'
 
+/**
+ * Creates a proper glob string for the seeder file(s) to run, based on the SEEDER_NAMES environment variable.
+ *
+ * @returns a glob string for the seeder file(s) to run
+ */
 function createSeederGlob() {
   const { SEEDER_NAMES = '' } = process.env
   const multipleSeeds = SEEDER_NAMES?.includes(',')

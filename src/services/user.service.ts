@@ -30,10 +30,22 @@ export class UserService {
     private readonly emailService?: EmailService,
   ) {}
 
+  /**
+   * Omits sensitive data from the OAuthUser object.
+   *
+   * @param user - the complete OAuthUser object
+   * @returns A new OAuthUser object with the sensitive data omitted
+   */
   private omitSensitiveData(user: OAuthUser) {
     return _.omit(user, ['plainTextPassword', 'hashedPassword', 'activationToken'])
   }
 
+  /**
+   * Registers a new user.  This also sends a verification email to the user.
+   *
+   * @param user - the user to register
+   * @returns A promise that resolves to the newly created user, minus the sensitive data
+   */
   async register(
     user: RegisterUserDTO,
   ): Promise<Omit<OAuthUser, 'hashedPassword' | 'activationToken'>> {
@@ -60,6 +72,13 @@ export class UserService {
     return this.omitSensitiveData(newUser)
   }
 
+  /**
+   * Activates a user's account.  If a token is invalid or the user is already active, an exception
+   * is thrown.
+   *
+   * @param token - the activation token
+   * @returns A promise that resolves to the activated user, minus the sensitive data
+   */
   async activate(token: string) {
     const user = await this.userRepository.findOne({
       where: { activationToken: token },
@@ -77,6 +96,13 @@ export class UserService {
     return this.userRepository.save(user).then(this.omitSensitiveData)
   }
 
+  /**
+   * Changes a user's password.  This is only available to authenticated users.
+   *
+   * @param userId - the user's id
+   * @param newPassword - the new password
+   * @returns A promise that resolves to the updated user, minus the sensitive data
+   */
   async changePassword(userId: number, newPassword: string) {
     const user = await this.userRepository.findOneOrFail({
       where: { id: userId, active: true },
@@ -85,6 +111,13 @@ export class UserService {
     return this.userRepository.save(user).then(this.omitSensitiveData)
   }
 
+  /**
+   * Generates the select object for the user repository.  This is used to omit sensitive data
+   * from the user object.
+   *
+   * @param authenticated - whether the user is authenticated
+   * @returns The select object
+   */
   private generateSelect(authenticated: boolean) {
     return {
       id: authenticated,
@@ -98,6 +131,15 @@ export class UserService {
     }
   }
 
+  /**
+   * Gets a list of users.  The pagination is forced.  Only the first name is returned for
+   * unauthenticated users.
+   *
+   * @param param0.authenticated - whether the user is authenticated
+   * @param param0.limit - the limit of users to return
+   * @param param0.offset - the offset of users to return
+   * @returns A promise that resolves to a list of users, minus the sensitive data
+   */
   async getUsers({
     authenticated = false,
     limit = USERS_DEFAULT_PAGINATION_LIMIT,
@@ -115,6 +157,13 @@ export class UserService {
     })
   }
 
+  /**
+   * Gets a single user.  Only the first name is returned for unauthenticated users.
+   *
+   * @param param0.userId - the user's id
+   * @param param0.authenticated - whether the user is authenticated
+   * @returns A promise that resolves to the user, minus the sensitive data
+   */
   async getUser({ userId, authenticated }: { userId: number; authenticated: boolean }) {
     return this.userRepository.findOneOrFail({
       where: { id: userId, active: true },

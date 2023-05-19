@@ -1,5 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
+/**
+ * This migration makes the activation_token column unique.
+ */
 export class MakeActivationColumnUnique1684397065140 implements MigrationInterface {
   name = 'MakeActivationColumnUnique1684397065140'
 

@@ -2,6 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { OAuthUser as OAuthUserInterface } from '@jmondi/oauth2-server'
 import { IsEmail, IsStrongPassword } from 'class-validator'
 
+/**
+ * An OAuth2 user entity.  Required by the @jmondi/oauth2-server library.
+ */
 @Entity('oauth_user') // the snake_case naming strategy will make this o_auth_user
 export class OAuthUser implements OAuthUserInterface {
   @PrimaryGeneratedColumn()

@@ -1,5 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
+/**
+ * This migration makes the first_name and last_name columns nullable. That's part of the requirements
+ * from the code exercise.
+ */
 export class MakeFirstAndLastNameNullable1684476485726 implements MigrationInterface {
   name = 'MakeFirstAndLastNameNullable1684476485726'
 

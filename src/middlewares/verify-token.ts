@@ -6,6 +6,14 @@ import { TokenService } from '../services/token.service'
 const tokenRepository = mainDataSource.getRepository(OAuthToken)
 const tokenService = new TokenService(tokenRepository)
 
+/**
+ * Verifies an access token and retrieves the user that owns it.  If the token is invalid, the
+ * request will proceed without a user.
+ *
+ * @param request - the request object from Express
+ * @param response - the response object from Express
+ * @param next - the next function from Express
+ */
 export async function verifyToken(
   request: Express.Request,
   response: Express.Response,

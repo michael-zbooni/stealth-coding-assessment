@@ -18,10 +18,10 @@ const controller = new UserController(userService)
 export const userRouter = Router()
 
 userRouter
-  .post('/', remapPasswordField, validation(OAuthUser), controller.handle('register'))
   .get('/', validatePaginationParams, controller.handle('list'))
   .get('/verify', controller.handle('verify'))
   .get('/:id', controller.handle('getUser')) // must be below /verify, else verify is treated as an /:id
+  .post('/', remapPasswordField, validation(OAuthUser), controller.handle('register'))
   .patch(
     '/:id/change-password',
     verifyToken,
