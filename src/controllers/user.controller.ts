@@ -3,9 +3,12 @@ import { UserService } from '../services/user.service'
 import { EntityNotFoundError } from 'typeorm'
 import { GenericException } from '../exceptions/generic.exception'
 import { NotFoundException } from '../exceptions/not-found.exception'
+import { Controller } from './controller'
 
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class UserController extends Controller {
+  constructor(private readonly userService: UserService) {
+    super()
+  }
 
   async register({ body: { firstName, lastName, email, plainTextPassword } }: Express.Request) {
     try {
@@ -28,7 +31,7 @@ export class UserController {
     return this.userService.activate(token as string) // query params can be of multiple types
   }
 
-  async list({ query: { limit = '10', offset = '0' } }: Express.Request) {
+  async list({ query: { limit, offset } }: Express.Request) {
     return this.userService.getUsers({
       authenticated: false,
       limit: Number(limit),
