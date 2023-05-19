@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: Stealth Coding Assessment Backend
+    env: node
+    plan: free
+    region: singapore
+    repo: https://github.com/myknbani/stealth-coding-assessment
+    buildCommand: npm run build
+    startCommand: npm run start
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: stealth-assessment
+          property: connectionString
+      - key: EMAILJS_PUBLIC_KEY
+        sync: false
+      - key: EMAILJS_PRIVATE_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+    autoDeploy: false # optional

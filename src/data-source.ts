@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 
 import { DataSource, DataSourceOptions } from 'typeorm'
-import { postgresConfig } from './constants'
+import { DATABASE_URL } from './constants'
 import { SeederOptions } from 'typeorm-extension'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 
@@ -17,15 +17,16 @@ function createSeederGlob() {
   return SEEDER_NAMES ? `${SEEDER_NAMES}` : '*'
 }
 
-console.log('foo', `src/seeds/${createSeederGlob()}.seeder.ts`)
+console.log('foo', `./seeds/${createSeederGlob()}.seeder.ts`)
 
 export const mainDataSource = new DataSource({
-  ...postgresConfig,
+  type: 'postgres',
+  url: DATABASE_URL,
   synchronize: false,
   logging: true,
-  entities: ['src/entities/**/*.entity.ts'],
-  migrations: ['src/migrations/**/*.ts'],
+  entities: ['./entities/**/*.entity.ts'],
+  migrations: ['./migrations/**/*.ts'],
   namingStrategy: new SnakeNamingStrategy(),
   subscribers: [],
-  seeds: [`src/seeds/${createSeederGlob()}.seeder.ts`],
+  seeds: [`./seeds/${createSeederGlob()}.seeder.ts`],
 } as DataSourceOptions & SeederOptions)
