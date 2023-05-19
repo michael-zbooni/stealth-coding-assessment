@@ -3,7 +3,7 @@ module.exports = {
     '^.+\\.(t|j)s$': [
       '@swc/jest',
       {
-        sourceMaps: true,
+        sourceMaps: 'inline',
         jsc: {
           transform: {
             legacyDecorator: true,
