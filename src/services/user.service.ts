@@ -34,8 +34,7 @@ export class UserService {
       hashedPassword: await hash(plainTextPassword, BCRYPT_ROUNDS),
       activationToken: crypto.randomBytes(32).toString('base64url'),
     }
-    const newUser = await this.userRepository.save<NewUser>(newUserDTO)
-    return this.omitSensitiveData(newUser)
+    return this.userRepository.save<NewUser>(newUserDTO).then(this.omitSensitiveData)
   }
 
   async activate(token: string) {
@@ -43,8 +42,7 @@ export class UserService {
       where: { activationToken: token, active: false },
     })
     user.active = true
-    const activeUser = await this.userRepository.save(user)
-    return this.omitSensitiveData(activeUser)
+    return this.userRepository.save(user).then(this.omitSensitiveData)
   }
 
   async changePassword(userId: number, newPassword: string) {
@@ -52,8 +50,7 @@ export class UserService {
       where: { id: userId, active: true },
     })
     user.hashedPassword = await hash(newPassword, BCRYPT_ROUNDS)
-    const updatedUser = await this.userRepository.save(user)
-    return this.omitSensitiveData(updatedUser)
+    return this.userRepository.save(user).then(this.omitSensitiveData)
   }
 
   async getUsers({
@@ -65,7 +62,7 @@ export class UserService {
     limit: number
     offset: number
   }) {
-    const users = await this.userRepository.find({
+    return this.userRepository.find({
       where: { active: true },
       select: {
         id: authenticated,
@@ -80,6 +77,5 @@ export class UserService {
       take: limit,
       skip: offset,
     })
-    return users
   }
 }
