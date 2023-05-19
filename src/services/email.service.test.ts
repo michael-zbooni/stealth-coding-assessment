@@ -24,7 +24,7 @@ describe('EmailService', () => {
         {
           to_name: 'there',
           to_email: 'mike@gmail.com',
-          activation_link: 'http://localhost:3000/users/verify?token=123',
+          link: 'http://localhost:3000/users/verify?token=123',
         },
         expect.objectContaining({
           publicKey: expect.toBeOneOf([expect.any(String), undefined]),

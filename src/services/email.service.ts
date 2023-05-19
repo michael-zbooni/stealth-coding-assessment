@@ -19,7 +19,7 @@ export class EmailService {
     const templateParams = {
       to_name: toName,
       to_email: toEmail,
-      activation_link: activationLink,
+      link: activationLink,
     }
 
     const response = await emailjs.send(

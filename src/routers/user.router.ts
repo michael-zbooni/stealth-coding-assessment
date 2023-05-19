@@ -31,6 +31,7 @@ function toExpressCallback(controllerMethod: Express.RequestHandler) {
       console.log('result', result)
       response.json(result)
     } catch (error) {
+      console.error('EEEERRRRRROOOORRR', error)
       if (error instanceof TypeORMError && error.message.includes('duplicate key')) {
         // change User to something else when refactoring this function to be generic
         response.status(409).json({ error: 'email already exists' })
