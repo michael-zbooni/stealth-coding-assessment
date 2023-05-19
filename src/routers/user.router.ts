@@ -8,7 +8,6 @@ import { validation } from '../middlewares/validation'
 import remapPasswordField from '../middlewares/remap-password-field'
 import { TypeORMError } from 'typeorm'
 import { validateChangePasswordRequest } from '../middlewares/validate-change-password-request'
-import { verifyToken } from '../middlewares/verify-token'
 
 const userRepository = mainDataSource.getRepository(OAuthUser)
 const userService = new UserService(userRepository)
