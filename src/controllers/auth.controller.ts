@@ -20,11 +20,14 @@ import { JWT_SECRET } from '../constants'
 import Express from 'express'
 import _ from 'lodash'
 import { logger } from '../logger'
+import { Controller } from './controller'
+import { UnauthorizedException } from '../exceptions/unauthorized.exception'
 
-export class AuthController {
+export class AuthController extends Controller {
   private readonly authorizationServer: AuthorizationServer
 
   constructor(datasource: DataSource) {
+    super()
     this.authorizationServer = new AuthorizationServer(
       new OAuthCodeRepository(datasource.getRepository(OAuthCode)),
       new OAuthClientRepository(datasource.getRepository(OAuthClient)),
@@ -44,7 +47,7 @@ export class AuthController {
   // incomplete, and actually not needed for the coding exercise, and so was removed.
   // See this commit to revive: https://github.com/myknbani/stealth-coding-assessment/commit/3a5beb0
 
-  async issueToken(request: Express.Request, response: Express.Response) {
+  async issueToken(request: Express.Request, _response: Express.Response) {
     try {
       const oauthResponse = (await this.authorizationServer.respondToAccessTokenRequest(
         request,
@@ -53,25 +56,20 @@ export class AuthController {
       // token generated and persisted in the DB, so we'll return the response manually
       // return handleExpressResponse(response, oauthResponse)
 
-      response
-        .status(200)
-        .json(
-          _.pick(oauthResponse.accessToken, [
-            'accessToken',
-            'accessTokenExpiresAt',
-            'refreshToken',
-            'refreshTokenExpiresAt',
-          ]),
-        )
+      return _.pick(oauthResponse.accessToken, [
+        'accessToken',
+        'accessTokenExpiresAt',
+        'refreshToken',
+        'refreshTokenExpiresAt',
+      ])
     } catch (error) {
       // handleExpressError only handles OAuthExceptions and re-throws others
       logger.error('Error issuing a token', error)
       if (error instanceof OAuthException || error instanceof EntityNotFoundError) {
         // handleExpressError(error, response) // this one works but hard to control status code and message
-        response.status(401).json({ error: 'Invalid credentials' })
-      } else {
-        response.status(500).json({ error: 'Internal server error' })
+        throw new UnauthorizedException('Invalid credentials')
       }
+      throw error
     }
   }
 }

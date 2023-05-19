@@ -9,12 +9,6 @@ import { logger } from './logger'
 
 const app = express()
 
-const authController = new AuthController(mainDataSource)
-
-function bindControllerMethod<T>(controller: T, methodName: keyof T) {
-  return (controller[methodName] as express.RequestHandler).bind(controller)
-}
-
 function startServer() {
   app
     .use(bodyParser.json())
@@ -22,7 +16,7 @@ function startServer() {
     .get('/', (req, res) => {
       res.send('Hello World!')
     })
-    .post('/token', bindControllerMethod(authController, 'issueToken'))
+    .post('/token', new AuthController(mainDataSource).handle('issueToken'))
     .use('/users', userRouter)
     .listen(SERVER_PORT, () => {
       logger.info(`Server running on port ${SERVER_PORT}`)
