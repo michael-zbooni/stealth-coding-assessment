@@ -5,7 +5,8 @@ import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
 import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
-import { pick } from 'lodash/fp'
+import fp from 'lodash/fp'
+import _ from 'lodash'
 
 type MockValue = never
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
@@ -258,7 +259,7 @@ describe('UserService', () => {
     })
 
     it('returns a list of users with first name only (minus sensitive info) if the request is unauthenticated', async () => {
-      baseRepositoryMock.find.mockResolvedValue([user, anotherUser].map(pick(['firstName'])))
+      baseRepositoryMock.find.mockResolvedValue([user, anotherUser].map(fp.pick(['firstName'])))
 
       const actual = await service.getUsers({ authenticated: false })
 
@@ -333,7 +334,7 @@ describe('UserService', () => {
     })
 
     it('returns the first name only if the request is unauthenticated', async () => {
-      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+      baseRepositoryMock.findOneOrFail.mockResolvedValue(_.pick(user, ['firstName']))
 
       const actual = await service.getUser({ userId: 1, authenticated: false })
       expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
@@ -353,16 +354,7 @@ describe('UserService', () => {
         },
       })
 
-      // there are undefined values like hashedPassword, so toStrictEqual fails
-      // https://jestjs.io/docs/expect#toequalvalue
-      expect(actual).toEqual({
-        id: 1,
-        email: 'mike@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Coo',
-        createdAt: new Date('2023-01-01'),
-        updatedAt: new Date('2023-01-02'),
-      })
+      expect(actual).toStrictEqual({ firstName: 'Mike' })
     })
   })
 })
