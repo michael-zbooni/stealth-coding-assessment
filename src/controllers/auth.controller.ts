@@ -19,6 +19,7 @@ import { DataSource, EntityNotFoundError } from 'typeorm'
 import { JWT_SECRET } from '../constants'
 import Express from 'express'
 import _ from 'lodash'
+import { logger } from '../logger'
 
 export class AuthController {
   private readonly authorizationServer: AuthorizationServer
@@ -48,7 +49,6 @@ export class AuthController {
       const oauthResponse = (await this.authorizationServer.respondToAccessTokenRequest(
         request,
       )) as ResponseInterface & { accessToken: OAuthToken }
-      console.log('OAuthResponse', oauthResponse)
       // this officially-documented method responds with the JWT as the access_token instead of the
       // token generated and persisted in the DB, so we'll return the response manually
       // return handleExpressResponse(response, oauthResponse)
@@ -65,7 +65,7 @@ export class AuthController {
         )
     } catch (error) {
       // handleExpressError only handles OAuthExceptions and re-throws others
-      console.log('EEERRRROR', error)
+      logger.error('Error issuing a token', error)
       if (error instanceof OAuthException || error instanceof EntityNotFoundError) {
         // handleExpressError(error, response) // this one works but hard to control status code and message
         response.status(401).json({ error: 'Invalid credentials' })

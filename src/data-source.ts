@@ -2,6 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm'
 import { DATABASE_URL } from './constants'
 import { SeederOptions } from 'typeorm-extension'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
+import { logger } from './logger'
 import path from 'path'
 
 function createSeederGlob() {
@@ -15,8 +16,6 @@ function createSeederGlob() {
 
   return SEEDER_NAMES ? `${SEEDER_NAMES}` : '*'
 }
-
-console.log('foo', `./seeds/${createSeederGlob()}.seeder.ts`)
 
 export const mainDataSource = new DataSource({
   type: 'postgres',

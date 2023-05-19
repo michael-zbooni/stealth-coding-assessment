@@ -6,6 +6,7 @@ import _ from 'lodash'
 import { BCRYPT_ROUNDS, defaultPaginationLimits, BACKEND_URL } from '../constants'
 import { EmailService } from './email.service'
 import { UserActivationException } from './user-activation.exception'
+import { logger } from '../logger'
 
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
 
@@ -53,7 +54,7 @@ export class UserService {
         toName: newUser.firstName || 'there', // "Hello, Mike" or "Hello, there"
         activationLink: `${BACKEND_URL}/users/verify?token=${newUser.activationToken}`,
       })
-      console.log('Email response', response) // just log it for now
+      logger.info('Email response', response) // just log it for now
     }
 
     return this.omitSensitiveData(newUser)

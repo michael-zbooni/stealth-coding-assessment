@@ -11,7 +11,6 @@ export class UserController {
       email,
       plainTextPassword,
     })
-    console.log('newUser', newUser)
     return newUser
   }
 

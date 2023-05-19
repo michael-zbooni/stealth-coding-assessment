@@ -11,6 +11,7 @@ import { validateChangePasswordRequest } from '../middlewares/validate-change-pa
 import isOwnAccount from '../middlewares/is-own-account'
 import { verifyToken } from '../middlewares/verify-token'
 import { EmailService } from '../services/email.service'
+import { logger } from '../logger'
 
 const userRepository = mainDataSource.getRepository(OAuthUser)
 const emailService = new EmailService()
@@ -28,10 +29,9 @@ function toExpressCallback(controllerMethod: Express.RequestHandler) {
     const boundFunction = controllerMethod.bind(controller)
     try {
       const result = await boundFunction(request, response, next)
-      console.log('result', result)
       response.json(result)
     } catch (error) {
-      console.error('EEEERRRRRROOOORRR', error)
+      logger.error(`Error in ${request.url}`, error)
       if (error instanceof TypeORMError && error.message.includes('duplicate key')) {
         // change User to something else when refactoring this function to be generic
         response.status(409).json({ error: 'email already exists' })

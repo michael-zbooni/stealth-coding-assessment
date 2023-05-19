@@ -5,6 +5,7 @@ import { mainDataSource } from './data-source'
 import { AuthController } from './controllers/auth.controller'
 import bodyParser from 'body-parser'
 import { userRouter } from './routers/user.router'
+import { logger } from './logger'
 
 const app = express()
 
@@ -24,10 +25,10 @@ function startServer() {
     .post('/token', bindControllerMethod(authController, 'issueToken'))
     .use('/users', userRouter)
     .listen(SERVER_PORT, () => {
-      console.log(`Server running on port ${SERVER_PORT}`)
+      logger.info(`Server running on port ${SERVER_PORT}`)
 
       if (process.argv.includes('--debug')) {
-        console.log('Debug enabled: to attach debugger, use process ID: ', process.pid)
+        logger.debug('Debug enabled: to attach debugger, use process ID: ', process.pid)
       }
     })
 }
