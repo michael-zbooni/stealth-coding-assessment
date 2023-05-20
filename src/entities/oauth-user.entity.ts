@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm'
 import { OAuthUser as OAuthUserInterface } from '@jmondi/oauth2-server'
 import { IsEmail, IsStrongPassword } from 'class-validator'
 
@@ -27,6 +34,7 @@ export class OAuthUser implements OAuthUserInterface {
   hashedPassword!: string
 
   @Column({ default: false })
+  @Index()
   active!: boolean
 
   @Column({ unique: true })
