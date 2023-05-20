@@ -24,13 +24,13 @@ export class OAuthToken implements OAuthTokenInterface {
   @PrimaryColumn('varchar', { length: 128 })
   accessToken!: string
 
-  @Column()
+  @Column({ type: 'timestamp with time zone' })
   accessTokenExpiresAt!: Date
 
   @Column('varchar', { nullable: true, length: 128, unique: true })
   refreshToken?: string
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   refreshTokenExpiresAt?: Date
 
   @ManyToOne(() => OAuthClient)
@@ -65,10 +65,10 @@ export class OAuthToken implements OAuthTokenInterface {
   })
   scopes!: OAuthScope[]
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt!: Date
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt!: Date
 
   /**

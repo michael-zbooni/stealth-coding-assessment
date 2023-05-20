@@ -9,6 +9,9 @@ import { OAuthClient } from '../entities/oauth-client.entity'
 import { OAuthScope } from '../entities/oauth-scope.entity'
 import { OAuthToken } from '../entities/oauth-token.entity'
 import { OAuthUser } from '../entities/oauth-user.entity'
+import { tokenExpiration } from '../config'
+
+const { REFRESH_TOKEN: REFRESH_TOKEN_EXPIRATION } = tokenExpiration
 
 /**
  * This repository is used by the @jmondi/oauth2-server library to issue and revoke tokens.
@@ -47,7 +50,8 @@ export class OAuthTokenRepository implements OAuthTokenRepositoryInterface {
   ): Promise<OAuthToken> {
     const token = new OAuthToken()
     token.accessToken = crypto.randomBytes(32).toString('base64url')
-    token.accessTokenExpiresAt = new DateInterval('2h').getEndDate()
+    // this is automatically provided by the library, so no need to set it, commenting out for now
+    // token.accessTokenExpiresAt = new DateInterval('15m').getEndDate()
     token.client = client
     token.clientId = client.id
     token.user = user
@@ -92,7 +96,8 @@ export class OAuthTokenRepository implements OAuthTokenRepositoryInterface {
    */
   async issueRefreshToken(accessToken: OAuthToken): Promise<OAuthToken> {
     accessToken.refreshToken = crypto.randomBytes(32).toString('base64url')
-    accessToken.refreshTokenExpiresAt = new DateInterval('2h').getEndDate()
+    // this is not automatically provided by the library
+    accessToken.refreshTokenExpiresAt = new DateInterval(REFRESH_TOKEN_EXPIRATION).getEndDate()
     return await this.baseRepository.save(accessToken)
   }
 

@@ -22,4 +22,11 @@ export const emailjsConfig = Object.freeze({
   },
 })
 
+export const tokenExpiration = Object.freeze({
+  ACCESS_TOKEN: '15m', // 15 minutes
+  REFRESH_TOKEN: '30d', // 30 days
+  AUTH_CODE: '15m', // 15 minutes
+  // TODO: add for other types of tokens (e.g. email verification)
+})
+
 // TODO: add constants for date intervals, HTTP status code, password strength params, etc

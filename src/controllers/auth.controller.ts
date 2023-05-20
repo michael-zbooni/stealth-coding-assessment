@@ -17,13 +17,15 @@ import { OAuthScope } from '../entities/oauth-scope.entity'
 import { OAuthUser } from '../entities/oauth-user.entity'
 import { OAuthUserRepository } from '../repositories/oauth-user.repository'
 import { DataSource, EntityNotFoundError } from 'typeorm'
-import { JWT_SECRET } from '../config'
+import { JWT_SECRET, tokenExpiration } from '../config'
 import Express from 'express'
 import _ from 'lodash'
 import { logger } from '../logger'
 import { Controller } from './controller'
 import { UnauthorizedException } from '../exceptions/unauthorized.exception'
 import { BadRequestException } from '../exceptions/bad-request-exception'
+
+const { ACCESS_TOKEN: ACCESS_TOKEN_EXPIRY } = tokenExpiration
 
 export type OAuthTokenResponse = Pick<
   OAuthToken,
@@ -49,8 +51,8 @@ export class AuthController extends Controller {
     )
     this.authorizationServer.enableGrantTypes(
       // ['authorization_code', new DateInterval('15m')],
-      ['password', new DateInterval('15m')],
-      'refresh_token',
+      ['password', new DateInterval(ACCESS_TOKEN_EXPIRY)],
+      'refresh_token', // no need to put the expiry time, as it's not automatically set by the library
     )
   }
 

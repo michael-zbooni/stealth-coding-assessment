@@ -9,6 +9,9 @@ import { OAuthCode } from '../entities/oauth-code.entity'
 import { OAuthClient } from '../entities/oauth-client.entity'
 import { OAuthScope } from '../entities/oauth-scope.entity'
 import { OAuthUser } from '../entities/oauth-user.entity'
+import { tokenExpiration } from '../config'
+
+const { AUTH_CODE: AUTH_CODE_EXPIRATION } = tokenExpiration
 
 /**
  * This repository is used by the @jmondi/oauth2-server library to issue and revoke auth codes.
@@ -53,7 +56,8 @@ export class OAuthCodeRepository implements OAuthAuthCodeRepositoryInterface {
   issueAuthCode(client: OAuthClient, user: OAuthUser | undefined, scopes: OAuthScope[]): OAuthCode {
     const authCode = new OAuthCode()
     authCode.code = crypto.randomBytes(32).toString('base64url')
-    authCode.expiresAt = new DateInterval('15m').getEndDate()
+    // has timezone issue, but not important (and actually unused) for this coding exercise
+    authCode.expiresAt = new DateInterval(AUTH_CODE_EXPIRATION).getEndDate()
     authCode.client = client
     authCode.clientId = client.id
     authCode.user = user
