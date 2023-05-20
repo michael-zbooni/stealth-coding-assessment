@@ -20,7 +20,7 @@ export function isOwnAccount(
   if (!user) {
     return response
       .status(HttpStatusCode.Unauthorized)
-      .json({ error: 'Unauthorized: OAuth2 bearer token missing or invalid' })
+      .json({ error: 'Unauthorized: OAuth2 bearer token missing, invalid, or expired.' })
   }
 
   if (user.id !== Number(userId)) {
