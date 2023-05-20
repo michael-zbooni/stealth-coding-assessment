@@ -39,8 +39,7 @@ export class OAuthUserRepository implements OAuthUserRepositoryInterface {
   }
 
   /**
-   * Adds extra fields to the JWT.  This is currently not used, since we don't use JWTs, only that
-   * it's required by the @jmondi/oauth2-server library.
+   * Adds extra fields to the JWT.  Currently we don't add any.
    */
   async extraAccessTokenFields(_user: OAuthUser): Promise<ExtraAccessTokenFields | undefined> {
     return {}

@@ -2,6 +2,9 @@ import Express from 'express'
 import { mainDataSource } from '../data-source'
 import { OAuthToken } from '../entities/oauth-token.entity'
 import { TokenService } from '../services/token.service'
+import { JwtService } from '@jmondi/oauth2-server'
+import { JWT_SECRET } from '../constants'
+import { logger } from '../logger'
 
 const tokenRepository = mainDataSource.getRepository(OAuthToken)
 const tokenService = new TokenService(tokenRepository)
@@ -20,14 +23,12 @@ export async function verifyToken(
   next: Express.NextFunction,
 ) {
   const token = request.header('Authorization')?.slice('Bearer '.length)
-  ///////////////////////////////////////// TRADEOFF note /////////////////////////////////////////
-  // OAuth 2.0 doesn’t define a specific format for Access Tokens, see:
-  // https://auth0.com/intro-to-iam/what-is-oauth-2, also there's an issue in OAuthTokenRepository
-  // where it persists a different token (a crypto-random one) but issues a JWT
-  ///////////////////////////////////////// TRADEOFF note /////////////////////////////////////////
   if (token) {
+    const jwtService = new JwtService(JWT_SECRET)
+    const { jti } = await jwtService.verify(token)
+
     // retrieve user from the DB using the token
-    const user = await tokenService.getUserFromToken(token as string)
+    const user = await tokenService.getUserFromToken(jti as string)
     response.locals.user = user
   }
 

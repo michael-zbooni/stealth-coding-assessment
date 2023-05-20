@@ -1,11 +1,6 @@
 export const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000'
-
 export const SERVER_PORT = Number(process.env.PORT) || 3000
-
-// no fallback secret to avoid accidents with missing env var, however, this is useless and is only
-// needed to make @jmondi/oauth2-server work, JWTs are not used
 export const JWT_SECRET = process.env.JWT_SECRET
-
 export const BCRYPT_ROUNDS = Number(process.env.BCRYPT_ROUNDS) || 10 // bcrypt library default
 
 export const defaultPaginationLimits = Object.freeze({

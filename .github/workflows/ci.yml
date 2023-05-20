@@ -17,7 +17,6 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/stealth_assessment
       EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
       EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
-      # This is just to make @jmondi/oauth2-server JwtService work
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
