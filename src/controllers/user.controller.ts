@@ -5,6 +5,7 @@ import { GenericException } from '../exceptions/generic.exception'
 import { NotFoundException } from '../exceptions/not-found.exception'
 import { Controller } from './controller'
 import { OAuthUser } from '../entities/oauth-user.entity'
+import { ConflictException } from '../exceptions/conflict.exception'
 
 export type UnauthenticatedUserResponse = Pick<OAuthUser, 'firstName'>
 export type AuthenticatedUserResponse = Omit<OAuthUser, 'hashedPassword' | 'activationToken'>
@@ -30,7 +31,7 @@ export class UserController extends Controller {
    */
   async register({
     body: { firstName, lastName, email, plainTextPassword },
-  }: Express.Request): Promise<Omit<OAuthUser, 'hashedPassword' | 'activationToken'>> {
+  }: Express.Request): Promise<AuthenticatedUserResponse> {
     try {
       return await this.userService.register({
         firstName,
@@ -40,7 +41,7 @@ export class UserController extends Controller {
       })
     } catch (error) {
       if (error instanceof EntityNotFoundError && error.message.includes('duplicate key')) {
-        throw new GenericException('Email already exists', 409)
+        throw new ConflictException('Email already exists')
       }
       throw error
     }
@@ -54,9 +55,7 @@ export class UserController extends Controller {
    *
    * @returns A promise that resolves to the newly created user, with his/her active status set to true
    */
-  async verify({
-    query: { token },
-  }: Express.Request): Promise<Omit<OAuthUser, 'hashedPassword' | 'activationToken'>> {
+  async verify({ query: { token } }: Express.Request): Promise<AuthenticatedUserResponse> {
     return this.userService.activate(token as string) // query params can be of multiple types
   }
 
