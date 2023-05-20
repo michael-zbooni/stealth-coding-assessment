@@ -13,6 +13,7 @@ export const CRYPTO_RANDOM_BYTES_LENGTH = 32 // 256 bits
 export const defaultPaginationLimits = Object.freeze({
   DEFAULT: 20,
   USERS: 20,
+  MAX: 100, // TODO: make this configurable per entity
 })
 
 export const emailjsConfig = Object.freeze({

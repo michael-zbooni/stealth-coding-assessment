@@ -2,6 +2,7 @@ import Express from 'express'
 
 import { isNumberString } from 'class-validator'
 import { HttpStatusCode } from '../enums/http-status-code.enum'
+import { defaultPaginationLimits } from '../config'
 
 /**
  * Validates that the pagination params are valid.
@@ -33,6 +34,12 @@ export function validatePaginationParams(
   // check negative offset
   if (offset && Number(offset) < 0) {
     response.status(HttpStatusCode.BadRequest).json({ error: 'Offset cannot be negative' })
+    return
+  }
+
+  // too much limit can be bad for performance
+  if (limit && Number(limit) > defaultPaginationLimits.MAX) {
+    response.status(HttpStatusCode.BadRequest).json({ error: 'Limit is too high' })
     return
   }
 
