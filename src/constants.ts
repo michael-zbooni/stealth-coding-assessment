@@ -19,3 +19,5 @@ export const emailjsConfig = Object.freeze({
     activation: process.env.EMAILJS_TEMPLATE_ACTIVATION ?? 'template_q0ob4ri',
   },
 })
+
+// TODO: add constants for date intervals, HTTP status code, password strength params, etc
