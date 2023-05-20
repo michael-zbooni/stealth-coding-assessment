@@ -31,7 +31,9 @@ export async function verifyToken(
     try {
       const { jti } = await jwtService.verify(token)
 
-      // retrieve user from the DB using the token
+      // retrieve user from the DB using the token.  Normally JWTs are stateless, and they expire,
+      // but here, the DB is the simplest strategy that tells us if the token is revoked ealier than
+      // its expiration date.
       const user = await tokenService.getUserFromToken(jti as string)
       response.locals.user = user
     } catch (error) {

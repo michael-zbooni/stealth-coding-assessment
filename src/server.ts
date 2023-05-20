@@ -13,8 +13,14 @@ function startServer() {
   app
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
-    .get('/', (req, res) => {
-      res.send('Hello World!')
+    .get('/', async (req, res) => {
+      res.send(/* html */ `
+        <html>
+          <body>
+            <a href="https://github.com/myknbani/stealth-coding-assessment">Go here for instructions</a>
+          </body>
+        </html>
+      `)
     })
     .post('/token', new AuthController(mainDataSource).handle('issueToken'))
     .use('/users', userRouter)
