@@ -1,3 +1,5 @@
+import { IsStrongPasswordOptions } from 'class-validator'
+
 export const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000'
 export const SERVER_PORT = Number(process.env.PORT) || 3000
 export const DATABASE_URL =
@@ -29,10 +31,10 @@ export const tokenExpiration = Object.freeze({
   // TODO: add for other types of tokens (e.g. email verification)
 })
 
-export const passwordStrengthConfig = Object.freeze({
+export const passwordStrengthConfig: Readonly<IsStrongPasswordOptions> = {
   minLength: 8,
   minLowercase: 1,
   minUppercase: 0,
   minNumbers: 1,
   minSymbols: 1,
-})
+}
