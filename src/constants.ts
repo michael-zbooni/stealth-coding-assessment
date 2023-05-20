@@ -14,6 +14,8 @@ export const DATABASE_URL =
 export const emailjsConfig = Object.freeze({
   publicKey: process.env.EMAILJS_PUBLIC_KEY, // no fallback, be sure to put these in .env
   privateKey: process.env.EMAILJS_PRIVATE_KEY, // no fallback, be sure to put these in .env
+
+  // make sure these are in .env as well, these fallbacks only work for my own EmailJS account
   serviceId: process.env.EMAILJS_SERVICE_ID ?? 'service_vuq08vk',
   templates: {
     activation: process.env.EMAILJS_TEMPLATE_ACTIVATION ?? 'template_q0ob4ri',
