@@ -3,7 +3,6 @@ import {
   DateInterval,
   JwtService,
   OAuthException,
-  ResponseInterface,
 } from '@jmondi/oauth2-server'
 import { handleExpressResponse } from '@jmondi/oauth2-server/dist/adapters/express'
 
