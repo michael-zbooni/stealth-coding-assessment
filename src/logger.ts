@@ -36,11 +36,9 @@ export const logger = winston.createLogger({
   ],
 })
 
-//
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
-if (process.env.NODE_ENV !== 'production') {
+// prevent Winston from being noisy in tests
+const localDev = !['production', 'test'].includes(process.env.NODE_ENV || '')
+if (localDev) {
   logger.add(
     new winston.transports.Console({
       format: winston.format.combine(
