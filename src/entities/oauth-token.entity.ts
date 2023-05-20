@@ -27,8 +27,7 @@ export class OAuthToken implements OAuthTokenInterface {
   @Column()
   accessTokenExpiresAt!: Date
 
-  @Column('varchar', { nullable: true, length: 128 })
-  @Index()
+  @Column('varchar', { nullable: true, length: 128, unique: true })
   refreshToken?: string
 
   @Column({ nullable: true })
