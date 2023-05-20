@@ -78,8 +78,8 @@ export class UserController extends Controller {
   ): Promise<AuthenticatedUserResponse[] | UnauthenticatedUserResponse[]> {
     return this.userService.getUsers({
       authenticated: Boolean(user),
-      limit: Number(limit),
-      offset: Number(offset),
+      limit: Number(limit) || undefined, // fallback to default params if falsy
+      offset: Number(offset) || undefined, // TODO: add tests since there's already a breakage
     })
   }
 
