@@ -1,7 +1,7 @@
 import 'dotenv/config' // needed for seeding
 
 import { DataSource, DataSourceOptions } from 'typeorm'
-import { DATABASE_URL } from './constants'
+import { DATABASE_URL } from './config'
 import { SeederOptions } from 'typeorm-extension'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import path from 'path'

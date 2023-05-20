@@ -3,7 +3,7 @@ import { mainDataSource } from '../data-source'
 import { OAuthToken } from '../entities/oauth-token.entity'
 import { TokenService } from '../services/token.service'
 import { JwtService } from '@jmondi/oauth2-server'
-import { JWT_SECRET } from '../constants'
+import { JWT_SECRET } from '../config'
 
 const tokenRepository = mainDataSource.getRepository(OAuthToken)
 const tokenService = new TokenService(tokenRepository)

@@ -1,5 +1,5 @@
 import emailjs from '@emailjs/nodejs'
-import { emailjsConfig } from '../constants'
+import { emailjsConfig } from '../config'
 
 const {
   publicKey: EMAIL_JS_PUBLIC_KEY,

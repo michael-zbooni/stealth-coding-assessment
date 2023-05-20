@@ -4,7 +4,7 @@ import { EntityManager, Repository } from 'typeorm'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
-import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../constants'
+import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../config'
 import fp from 'lodash/fp'
 import _ from 'lodash'
 import { EmailService } from './email.service'

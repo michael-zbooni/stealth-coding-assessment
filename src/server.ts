@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { SERVER_PORT } from './constants'
+import { SERVER_PORT } from './config'
 import { mainDataSource } from './data-source'
 import { AuthController } from './controllers/auth.controller'
 import bodyParser from 'body-parser'
