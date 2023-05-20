@@ -1,7 +1,31 @@
 import winston from 'winston'
+import util from 'util'
+
+/**
+ * A transform function that makes Winston log functions behave like console.log
+ *
+ * @param info - info to transform
+ * @returns The transformed info
+ */
+function transform(info: winston.Logform.TransformableInfo) {
+  const args = info[Symbol.for('splat')]
+  if (args) {
+    info.message = util.formatWithOptions({ colors: true, depth: 5 }, info.message, ...args)
+  }
+  return info
+}
+
+/**
+ * Creates a Winston formatter that makes log functions behave like console.log
+ *
+ * @returns A Winston formatter
+ */
+function utilFormatter() {
+  return { transform }
+}
 
 export const logger = winston.createLogger({
-  level: 'info',
+  level: 'debug',
   format: winston.format.json(),
   transports: [
     //
@@ -21,8 +45,8 @@ if (process.env.NODE_ENV !== 'production') {
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.simple(),
         winston.format.timestamp(),
+        utilFormatter(),
         winston.format.printf((info) => {
           return `${info.timestamp} ${info.level}: ${info.message}`
         }),
