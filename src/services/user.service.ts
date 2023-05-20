@@ -1,12 +1,13 @@
 import { Repository } from 'typeorm'
 import { OAuthUser } from '../entities/oauth-user.entity'
-import { hash } from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 import crypto from 'crypto'
 import _ from 'lodash'
 import { BCRYPT_ROUNDS, defaultPaginationLimits, BACKEND_URL } from '../constants'
 import { EmailService } from './email.service'
 import { UserActivationException } from '../exceptions/user-activation.exception'
 import { logger } from '../logger'
+import { PasswordChangeException } from '../exceptions/password-change.exception'
 
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
 
@@ -107,6 +108,12 @@ export class UserService {
     const user = await this.userRepository.findOneOrFail({
       where: { id: userId, active: true },
     })
+
+    const sameAsOldPassword = await compare(newPassword, user.hashedPassword)
+    if (sameAsOldPassword) {
+      throw new PasswordChangeException('New password cannot be the same as the old password')
+    }
+
     user.hashedPassword = await hash(newPassword, BCRYPT_ROUNDS)
     return this.userRepository.save(user).then(this.omitSensitiveData)
   }

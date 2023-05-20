@@ -9,6 +9,7 @@ import fp from 'lodash/fp'
 import _ from 'lodash'
 import { EmailService } from './email.service'
 import { UserActivationException } from '../exceptions/user-activation.exception'
+import { PasswordChangeException } from '../exceptions/password-change.exception'
 
 type MockValue = never
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
@@ -34,6 +35,7 @@ const emailServiceMock = new MockEmailService()
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('some-bcrypt-hash'),
+  compare: jest.fn().mockResolvedValue(true),
 }))
 jest.mock('crypto', () => ({
   randomBytes: jest.fn().mockReturnValue('i-am-a-very-sensitive-token'),
@@ -172,6 +174,7 @@ describe('UserService', () => {
       baseRepositoryMock.save.mockResolvedValue(user)
       baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
       jest.spyOn(bcrypt, 'hash').mockResolvedValue('some-new-bcrypt-hash' as MockValue)
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as MockValue)
 
       const actual = await service.changePassword(1, 'yabadabadoo')
       expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
@@ -181,6 +184,7 @@ describe('UserService', () => {
         },
       })
       expect(bcrypt.hash).toHaveBeenCalledWith('yabadabadoo', BCRYPT_ROUNDS)
+      expect(bcrypt.compare).toHaveBeenCalledWith('yabadabadoo', 'i-am-a-very-sensitive-hash')
       expect(baseRepositoryMock.save).toHaveBeenCalledWith({
         id: 1,
         email: 'mike@gmail.com',
@@ -201,6 +205,26 @@ describe('UserService', () => {
         createdAt: new Date('2023-01-01'),
         updatedAt: new Date('2023-01-02'),
       })
+    })
+
+    it('rejects new passwords that are the same as the old one', async () => {
+      baseRepositoryMock.save.mockResolvedValue(user)
+      baseRepositoryMock.findOneOrFail.mockResolvedValue(user)
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('some-new-bcrypt-hash' as MockValue)
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as MockValue)
+
+      const actual = service.changePassword(1, 'yabadabadoo')
+      await expect(actual).rejects.toThrow(PasswordChangeException)
+      expect(baseRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+          active: true,
+        },
+      })
+
+      expect(bcrypt.compare).toHaveBeenCalledWith('yabadabadoo', 'some-new-bcrypt-hash')
+      expect(bcrypt.hash).not.toHaveBeenCalled()
+      expect(baseRepositoryMock.save).not.toHaveBeenCalledWith()
     })
   })
 
