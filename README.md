@@ -160,4 +160,3 @@ curl -L -X PATCH 'https://stealth-coding-assessment-backend.onrender.com/users/1
   "password": "yahoo123!"
 }'
 ```
-do
