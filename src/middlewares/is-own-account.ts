@@ -9,7 +9,7 @@ import { HttpStatusCode } from '../enums/http-status-code.enum'
  * @param response - the response object from Express
  * @param next - the next function from Express
  */
-export default function isOwnAccount(
+export function isOwnAccount(
   request: Express.Request,
   response: Express.Response,
   next: Express.NextFunction,

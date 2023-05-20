@@ -7,7 +7,7 @@ import Express from 'express'
  * @param _response - the response object from Express
  * @param next - the next function from Express
  */
-export default function remapPasswordField(
+export function remapPasswordField(
   request: Express.Request,
   _response: Express.Response,
   next: Express.NextFunction,
