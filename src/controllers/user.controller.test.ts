@@ -1,4 +1,4 @@
-import { EntityNotFoundError, TypeORMError } from 'typeorm'
+import { EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm'
 import { UserService } from '../services/user.service'
 import { UserController } from './user.controller'
 import Express from 'express'
@@ -46,7 +46,7 @@ describe('UserController', () => {
       } as Express.Request
 
       userService.register.mockRejectedValue(
-        Object.assign(new EntityNotFoundError(OAuthUser, {}), { message: 'duplicate key' }),
+        Object.assign(new QueryFailedError('', [], {}), { message: 'duplicate key' }),
       )
 
       const actual = userController.register(request)

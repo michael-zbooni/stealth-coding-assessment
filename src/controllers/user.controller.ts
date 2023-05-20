@@ -1,10 +1,11 @@
 import Express from 'express'
 import { UserService } from '../services/user.service'
-import { EntityNotFoundError } from 'typeorm'
+import { EntityNotFoundError, TypeORMError } from 'typeorm'
 import { NotFoundException } from '../exceptions/not-found.exception'
 import { Controller } from './controller'
 import { OAuthUser } from '../entities/oauth-user.entity'
 import { ConflictException } from '../exceptions/conflict.exception'
+import { logger } from '../logger'
 
 export type UnauthenticatedUserResponse = Pick<OAuthUser, 'firstName'>
 export type AuthenticatedUserResponse = Omit<OAuthUser, 'hashedPassword' | 'activationToken'>
@@ -39,7 +40,8 @@ export class UserController extends Controller {
         plainTextPassword,
       })
     } catch (error) {
-      if (error instanceof EntityNotFoundError && error.message.includes('duplicate key')) {
+      logger.error('Error in user registration + CTOR', error, (error as any).constructor)
+      if (error instanceof TypeORMError && error.message.includes('duplicate key')) {
         throw new ConflictException('Email already exists')
       }
       throw error
