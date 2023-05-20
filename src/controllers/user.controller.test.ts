@@ -14,7 +14,7 @@ describe('UserController', () => {
     getUser: jest.fn(),
     changePassword: jest.fn(),
   }
-  const userController = new UserController(userService as any as UserService)
+  const userController = new UserController(userService as unknown as UserService)
 
   describe('#register', () => {
     it('calls the service method (#register) correctly', async () => {
@@ -79,7 +79,7 @@ describe('UserController', () => {
         query: {
           token: 'activation-token',
         },
-      } as any as Express.Request
+      } as unknown as Express.Request
 
       await userController.verify(request)
       expect(userService.activate).toHaveBeenCalledWith('activation-token')
@@ -93,7 +93,7 @@ describe('UserController', () => {
           offset: 20,
           limit: 15,
         },
-      } as any as Express.Request
+      } as unknown as Express.Request
       const response = { locals: {} } as Express.Response
 
       await userController.list(request, response)
@@ -107,8 +107,8 @@ describe('UserController', () => {
     it('calls the service method (#list) correctly for authenticated requests', async () => {
       const request = {
         query: {},
-      } as any as Express.Request
-      const response = { locals: { user: { id: 1 } } } as any as Express.Response
+      } as unknown as Express.Request
+      const response = { locals: { user: { id: 1 } } } as unknown as Express.Response
 
       await userController.list(request, response)
       expect(userService.getUsers).toHaveBeenCalledWith({
@@ -125,7 +125,7 @@ describe('UserController', () => {
         params: {
           id: 1,
         },
-      } as any as Express.Request
+      } as unknown as Express.Request
       const response = { locals: {} } as Express.Response
 
       await userController.getUser(request, response)
@@ -137,8 +137,8 @@ describe('UserController', () => {
         params: {
           id: 1,
         },
-      } as any as Express.Request
-      const response = { locals: { user: { id: 1 } } } as any as Express.Response
+      } as unknown as Express.Request
+      const response = { locals: { user: { id: 1 } } } as unknown as Express.Response
 
       await userController.getUser(request, response)
       expect(userService.getUser).toHaveBeenCalledWith({ userId: 1, authenticated: true })
@@ -149,7 +149,7 @@ describe('UserController', () => {
         params: {
           id: 1,
         },
-      } as any as Express.Request
+      } as unknown as Express.Request
       const response = { locals: {} } as Express.Response
 
       userService.getUser.mockRejectedValue(
@@ -166,7 +166,7 @@ describe('UserController', () => {
         params: {
           id: 1,
         },
-      } as any as Express.Request
+      } as unknown as Express.Request
       const response = { locals: {} } as Express.Response
 
       userService.getUser.mockRejectedValue(new TypeORMError())
@@ -191,7 +191,7 @@ describe('UserController', () => {
             id: 1,
           },
         },
-      } as any as Express.Request
+      } as unknown as Express.Request
 
       await userController.changePassword(request)
       expect(userService.changePassword).toHaveBeenCalledWith(1, 'new-password')
@@ -210,7 +210,7 @@ describe('UserController', () => {
             id: 1,
           },
         },
-      } as any as Express.Request
+      } as unknown as Express.Request
 
       userService.changePassword.mockRejectedValue(
         Object.assign(new EntityNotFoundError(OAuthUser, {}), { message: 'not found' }),

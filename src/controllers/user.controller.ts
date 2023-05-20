@@ -1,7 +1,6 @@
 import Express from 'express'
 import { UserService } from '../services/user.service'
 import { EntityNotFoundError } from 'typeorm'
-import { GenericException } from '../exceptions/generic.exception'
 import { NotFoundException } from '../exceptions/not-found.exception'
 import { Controller } from './controller'
 import { OAuthUser } from '../entities/oauth-user.entity'
