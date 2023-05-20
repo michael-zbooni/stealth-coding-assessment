@@ -1,5 +1,6 @@
 import Express from 'express'
 import { isStrongPassword } from 'class-validator'
+import { HttpStatusCode } from '../enums/http-status-code.enum'
 
 /**
  * Validates that the user's new password is strong enough.
@@ -30,5 +31,5 @@ export function validateChangePasswordRequest(
     return next()
   }
 
-  return response.status(400).json({ error: 'Password is not strong enough' })
+  return response.status(HttpStatusCode.BadRequest).json({ error: 'Password is not strong enough' })
 }

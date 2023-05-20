@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { Request, Response, NextFunction } from 'express'
 import _ from 'lodash'
+import { HttpStatusCode } from '../enums/http-status-code.enum'
 
 /**
  * Creates a middleware function that Validates the request body against the validation rules
@@ -28,7 +29,9 @@ export const validation = <T extends object>(classType: new () => T): Express.Re
         .value()
 
       // If validation fails, throw an error
-      return response.status(400).json({ errors: errorsMap })
+      return response
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: 'New user has invalid data.', errors: errorsMap })
     }
 
     // If validation succeeds, move to the next middleware

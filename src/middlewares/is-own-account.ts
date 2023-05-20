@@ -1,5 +1,6 @@
 import Express from 'express'
 import { OAuthUser } from '../entities/oauth-user.entity'
+import { HttpStatusCode } from '../enums/http-status-code.enum'
 
 /**
  * Validates that the user is accessing his/her own account.
@@ -17,11 +18,15 @@ export default function isOwnAccount(
   const user = response.locals.user as OAuthUser | undefined
 
   if (!user) {
-    return response.status(401).json({ error: 'Unauthorized' })
+    return response
+      .status(HttpStatusCode.Unauthorized)
+      .json({ error: 'Unauthorized: OAuth2 bearer token missing or invalid' })
   }
 
   if (user.id !== Number(userId)) {
-    return response.status(403).json({ error: 'Forbidden' })
+    return response
+      .status(HttpStatusCode.Forbidden)
+      .json({ error: `This is not User#${user.id}'s account` })
   }
 
   next()

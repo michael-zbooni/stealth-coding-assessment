@@ -23,6 +23,7 @@ import _ from 'lodash'
 import { logger } from '../logger'
 import { Controller } from './controller'
 import { UnauthorizedException } from '../exceptions/unauthorized.exception'
+import { BadRequestException } from '../exceptions/bad-request-exception'
 
 export type OAuthTokenResponse = Pick<
   OAuthToken,
@@ -71,7 +72,9 @@ export class AuthController extends Controller {
     } catch (error) {
       // handleExpressError only handles OAuthExceptions and re-throws others
       logger.error('Error issuing a token', error)
-      if (error instanceof OAuthException || error instanceof EntityNotFoundError) {
+      if (error instanceof OAuthException) {
+        throw new BadRequestException('Bad OAuth2 Request: ' + error.message)
+      } else if (error instanceof EntityNotFoundError) {
         // handleExpressError(error, response) // this one works but hard to control status code and message
         throw new UnauthorizedException('Invalid credentials')
       }

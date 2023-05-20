@@ -1,3 +1,4 @@
+import { HttpStatusCode } from '../enums/http-status-code.enum'
 import { GenericException } from '../exceptions/generic.exception'
 import { logger } from '../logger'
 import Express from 'express'
@@ -28,7 +29,9 @@ export abstract class Controller {
         if (error instanceof GenericException && error.message) {
           response.status(error.status).json({ error: (error as Error).message })
         } else {
-          response.status(500).json({ error: 'Internal server error' })
+          response
+            .status(HttpStatusCode.InternalServerError)
+            .json({ error: 'Internal server error' })
         }
       }
     }
