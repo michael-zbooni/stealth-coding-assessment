@@ -78,7 +78,7 @@ export class UserController extends Controller {
     return this.userService.getUsers({
       authenticated: Boolean(user),
       limit: Number(limit) || undefined, // fallback to default params if falsy
-      offset: Number(offset) || undefined, // TODO: add tests since there's already a breakage
+      offset: Number(offset) || undefined, // ditto
     })
   }
 
