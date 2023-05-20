@@ -1,3 +1,5 @@
+import 'dotenv/config' // needed for seeding
+
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { DATABASE_URL } from './constants'
 import { SeederOptions } from 'typeorm-extension'
