@@ -47,7 +47,7 @@ export class AuthController extends Controller {
       new OAuthTokenRepository(datasource.getRepository(OAuthToken)),
       new OAuthScopeRepository(datasource.getRepository(OAuthScope)),
       new OAuthUserRepository(datasource.getRepository(OAuthUser)),
-      new JwtService(JWT_SECRET),
+      new JwtService(JWT_SECRET!),
     )
     this.authorizationServer.enableGrantTypes(
       // ['authorization_code', new DateInterval('15m')],

@@ -1,3 +1,5 @@
+import 'dotenv/config' // strangely, loading .env from src/index.ts is not enough
+
 import { IsStrongPasswordOptions } from 'class-validator'
 
 export const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000'
