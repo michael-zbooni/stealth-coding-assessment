@@ -9,7 +9,7 @@ import { OAuthClient } from '../entities/oauth-client.entity'
 import { OAuthScope } from '../entities/oauth-scope.entity'
 import { OAuthToken } from '../entities/oauth-token.entity'
 import { OAuthUser } from '../entities/oauth-user.entity'
-import { tokenExpiration } from '../config'
+import { CRYPTO_RANDOM_BYTES_LENGTH, tokenExpiration } from '../config'
 
 const { REFRESH_TOKEN: REFRESH_TOKEN_EXPIRATION } = tokenExpiration
 
@@ -49,7 +49,7 @@ export class OAuthTokenRepository implements OAuthTokenRepositoryInterface {
     user?: OAuthUser,
   ): Promise<OAuthToken> {
     const token = new OAuthToken()
-    token.accessToken = crypto.randomBytes(32).toString('base64url')
+    token.accessToken = crypto.randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString('base64url')
     // this is automatically provided by the library, so no need to set it, commenting out for now
     // token.accessTokenExpiresAt = new DateInterval('15m').getEndDate()
     token.client = client
@@ -95,7 +95,7 @@ export class OAuthTokenRepository implements OAuthTokenRepositoryInterface {
    * @returns A promise that contains the OAuth2Token object.
    */
   async issueRefreshToken(accessToken: OAuthToken): Promise<OAuthToken> {
-    accessToken.refreshToken = crypto.randomBytes(32).toString('base64url')
+    accessToken.refreshToken = crypto.randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString('base64url')
     // this is not automatically provided by the library
     accessToken.refreshTokenExpiresAt = new DateInterval(REFRESH_TOKEN_EXPIRATION).getEndDate()
     return await this.baseRepository.save(accessToken)

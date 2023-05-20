@@ -8,6 +8,7 @@ import { EmailService } from './email.service'
 import { UserActivationException } from '../exceptions/user-activation.exception'
 import { logger } from '../logger'
 import { PasswordChangeException } from '../exceptions/password-change.exception'
+import { CRYPTO_RANDOM_BYTES_LENGTH } from '../config'
 
 const { USERS: USERS_DEFAULT_PAGINATION_LIMIT } = defaultPaginationLimits
 
@@ -55,7 +56,7 @@ export class UserService {
       ...otherUserInfo,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- we know it's not due to the validator
       hashedPassword: await hash(plainTextPassword!, BCRYPT_ROUNDS),
-      activationToken: crypto.randomBytes(32).toString('base64url'),
+      activationToken: crypto.randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString('base64url'),
     }
 
     const newUser = await this.userRepository.save(newUserDTO)

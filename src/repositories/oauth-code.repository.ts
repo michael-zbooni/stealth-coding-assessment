@@ -9,7 +9,7 @@ import { OAuthCode } from '../entities/oauth-code.entity'
 import { OAuthClient } from '../entities/oauth-client.entity'
 import { OAuthScope } from '../entities/oauth-scope.entity'
 import { OAuthUser } from '../entities/oauth-user.entity'
-import { tokenExpiration } from '../config'
+import { tokenExpiration, CRYPTO_RANDOM_BYTES_LENGTH } from '../config'
 
 const { AUTH_CODE: AUTH_CODE_EXPIRATION } = tokenExpiration
 
@@ -55,7 +55,7 @@ export class OAuthCodeRepository implements OAuthAuthCodeRepositoryInterface {
    */
   issueAuthCode(client: OAuthClient, user: OAuthUser | undefined, scopes: OAuthScope[]): OAuthCode {
     const authCode = new OAuthCode()
-    authCode.code = crypto.randomBytes(32).toString('base64url')
+    authCode.code = crypto.randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString('base64url')
     // has timezone issue, but not important (and actually unused) for this coding exercise
     authCode.expiresAt = new DateInterval(AUTH_CODE_EXPIRATION).getEndDate()
     authCode.client = client

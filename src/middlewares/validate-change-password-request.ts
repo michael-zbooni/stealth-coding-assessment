@@ -1,6 +1,7 @@
 import Express from 'express'
 import { isStrongPassword } from 'class-validator'
 import { HttpStatusCode } from '../enums/http-status-code.enum'
+import { passwordStrengthConfig } from '../config'
 
 /**
  * Validates that the user's new password is strong enough.
@@ -20,13 +21,7 @@ export function validateChangePasswordRequest(
 
   if (
     // TODO: configure the password-strength config in one place, or find a way to reuse OAuthUser validations
-    isStrongPassword(plainTextPassword, {
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 0,
-      minNumbers: 1,
-      minSymbols: 1,
-    })
+    isStrongPassword(plainTextPassword, passwordStrengthConfig)
   ) {
     return next()
   }

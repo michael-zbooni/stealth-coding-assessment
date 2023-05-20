@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 import { OAuthUser as OAuthUserInterface } from '@jmondi/oauth2-server'
 import { IsEmail, IsStrongPassword } from 'class-validator'
+import { passwordStrengthConfig } from '../config'
 
 /**
  * An OAuth2 user entity.  Required by the @jmondi/oauth2-server library.
@@ -27,7 +28,7 @@ export class OAuthUser implements OAuthUserInterface {
   @IsEmail()
   email!: string
 
-  @IsStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 0, minNumbers: 1 })
+  @IsStrongPassword(passwordStrengthConfig)
   plainTextPassword?: string // not persisted (no @Column(), always undefined when fetched from DB)
 
   @Column()

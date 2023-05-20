@@ -4,7 +4,7 @@ import { EntityManager, Repository } from 'typeorm'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
-import { BCRYPT_ROUNDS, defaultPaginationLimits } from '../config'
+import { BCRYPT_ROUNDS, CRYPTO_RANDOM_BYTES_LENGTH, defaultPaginationLimits } from '../config'
 import fp from 'lodash/fp'
 import _ from 'lodash'
 import { EmailService } from './email.service'
@@ -71,7 +71,7 @@ describe('UserService', () => {
       })
 
       expect(bcrypt.hash).toHaveBeenCalledWith('yahoo', BCRYPT_ROUNDS)
-      expect(crypto.randomBytes).toHaveBeenCalledWith(32)
+      expect(crypto.randomBytes).toHaveBeenCalledWith(CRYPTO_RANDOM_BYTES_LENGTH)
       expect(baseRepositoryMock.save).toHaveBeenCalledWith({
         email: 'mike@gmail.com',
         firstName: 'Mike',
