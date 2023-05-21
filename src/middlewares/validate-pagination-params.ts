@@ -27,7 +27,7 @@ export function validatePaginationParams(
   }
 
   // check negative OR 0 limit
-  if (limit && Number(limit) <= 0) {
+  if (limit != null && Number(limit) <= 0) {
     response.status(HttpStatusCode.BadRequest).json({ error: 'Limit cannot be zero or negative' })
     return
   }

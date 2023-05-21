@@ -17,12 +17,7 @@ export function validateChangePasswordRequest(
 ) {
   const { plainTextPassword } = request.body
 
-  // TODO: we might want to get the user, and check if the new password is the same as the old one
-
-  if (
-    // TODO: configure the password-strength config in one place, or find a way to reuse OAuthUser validations
-    isStrongPassword(plainTextPassword, passwordStrengthConfig)
-  ) {
+  if (isStrongPassword(plainTextPassword, passwordStrengthConfig)) {
     return next()
   }
 
