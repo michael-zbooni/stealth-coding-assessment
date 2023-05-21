@@ -107,7 +107,6 @@ curl -L -X POST 'https://stealth-coding-assessment-backend.onrender.com/token' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -d 'grant_type=refresh_token' \
 -d 'client_id=8a5e42d8-3d55-4e9b-a3f2-4fc92a83f7be' \
--d 'redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Foauth%2Fcallback' \
 -d 'refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.some_refresh_token_that_takes_too_long_to_expire.3eTYYcCsUlDRvaOWEZCq_HfGQsdqp3Hn5uXMmDsI3bs'
 ```
 
