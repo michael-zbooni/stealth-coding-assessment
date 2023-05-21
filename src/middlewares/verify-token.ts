@@ -6,10 +6,11 @@ import { JwtService } from '@jmondi/oauth2-server'
 import { JWT_SECRET } from '../config'
 import { logger } from '../logger'
 import { TokenExpiredError } from 'jsonwebtoken'
-import { HttpStatusCode } from '../enums/http-status-code.enum'
+import { OAuthTokenRepository } from '../repositories/oauth-token.repository'
 
-const tokenRepository = mainDataSource.getRepository(OAuthToken)
-const tokenService = new TokenService(tokenRepository)
+const baseTokenRepository = mainDataSource.getRepository(OAuthToken)
+const oauthTokenRepository = new OAuthTokenRepository(baseTokenRepository)
+const tokenService = new TokenService(oauthTokenRepository)
 
 /**
  * Verifies an access token and retrieves the user that owns it.  If the token is invalid, the
